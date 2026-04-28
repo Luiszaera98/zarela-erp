@@ -59,7 +59,7 @@ export function demoTenantPlugin(schema: mongoose.Schema) {
         try {
             const session = await getSession();
             // Si el usuario no es administrador, filtrar por su ID
-            if (session && session.role !== 'Admin' && session.role !== 'Administrador') {
+            if (session && session.role !== 'Administrador') {
                 this.where({ _demoCreatedBy: session.id });
             }
         } catch (error) {
@@ -91,7 +91,7 @@ export function demoTenantPlugin(schema: mongoose.Schema) {
 
         try {
             const session = await getSession();
-            if (session && session.role !== 'Admin' && session.role !== 'Administrador') {
+            if (session && session.role !== 'Administrador') {
                 // Insertar un $match al principio del pipeline
                 this.pipeline().unshift({ $match: { _demoCreatedBy: session.id } });
             }
