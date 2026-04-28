@@ -4,12 +4,12 @@ import { verifySessionToken } from "@/lib/auth/session";
 
 const ROLE_ROUTE_RULES: Array<{
     prefix: string;
-    roles: Array<"Administrador" | "Comercial" | "Operaciones">;
+    roles: Array<"Administrador" | "Comercial" | "Operaciones" | "Gerente">;
 }> = [
-    { prefix: "/inventory", roles: ["Administrador", "Operaciones"] },
-    { prefix: "/invoices", roles: ["Administrador", "Comercial"] },
-    { prefix: "/payments", roles: ["Administrador", "Comercial"] },
-    { prefix: "/expenses", roles: ["Administrador"] },
+    { prefix: "/inventory", roles: ["Administrador", "Operaciones", "Gerente"] },
+    { prefix: "/invoices", roles: ["Administrador", "Comercial", "Gerente"] },
+    { prefix: "/payments", roles: ["Administrador", "Comercial", "Gerente"] },
+    { prefix: "/expenses", roles: ["Administrador", "Gerente"] },
     { prefix: "/ecf-logs", roles: ["Administrador"] },
 ];
 
