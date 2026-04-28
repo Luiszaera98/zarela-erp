@@ -8,6 +8,7 @@ import { ExpenseCategoriesSettings } from '@/components/settings/expense-categor
 import { EcfSettings } from '@/components/settings/ecf-settings';
 import { ContingencyPanel } from '@/components/settings/contingency-panel';
 import { getNCFSequences, getUsers, getUnitTypes, getProductTypes, getExpenseCategories, getProductTypeCatalog } from '@/lib/actions/settingsActions';
+import { requireSession } from '@/lib/auth/session';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,9 @@ export default async function SettingsPage() {
     const ncfSequences = await getNCFSequences();
     const users = await getUsers();
 
+    const session = await requireSession();
+    const isGerente = session.role === 'Gerente';
+
     return (
         <div className="space-y-8 max-w-5xl mx-auto pb-10">
             <div>
@@ -27,12 +31,12 @@ export default async function SettingsPage() {
             </div>
 
             <Tabs defaultValue="inventory" className="w-full">
-                <TabsList className="grid w-full grid-cols-5 mb-8">
+                <TabsList className={`grid w-full mb-8 ${isGerente ? 'grid-cols-2 max-w-md' : 'grid-cols-5'}`}>
                     <TabsTrigger value="inventory">Inventario</TabsTrigger>
                     <TabsTrigger value="expenses">Gastos</TabsTrigger>
-                    <TabsTrigger value="fiscal">Fiscal (NCF)</TabsTrigger>
-                    <TabsTrigger value="ecf">e-CF</TabsTrigger>
-                    <TabsTrigger value="users">Usuarios</TabsTrigger>
+                    {!isGerente && <TabsTrigger value="fiscal">Fiscal (NCF)</TabsTrigger>}
+                    {!isGerente && <TabsTrigger value="ecf">e-CF</TabsTrigger>}
+                    {!isGerente && <TabsTrigger value="users">Usuarios</TabsTrigger>}
                 </TabsList>
 
                 <TabsContent value="inventory" className="space-y-4">
@@ -44,18 +48,22 @@ export default async function SettingsPage() {
                     <ExpenseCategoriesSettings initialCategories={expenseCategories} />
                 </TabsContent>
 
-                <TabsContent value="fiscal" className="space-y-4">
-                    <NCFSettings initialSequences={ncfSequences} />
-                </TabsContent>
+                {!isGerente && (
+                    <>
+                        <TabsContent value="fiscal" className="space-y-4">
+                            <NCFSettings initialSequences={ncfSequences} />
+                        </TabsContent>
 
-                <TabsContent value="ecf" className="space-y-4">
-                    <EcfSettings />
-                    <ContingencyPanel />
-                </TabsContent>
+                        <TabsContent value="ecf" className="space-y-4">
+                            <EcfSettings />
+                            <ContingencyPanel />
+                        </TabsContent>
 
-                <TabsContent value="users" className="space-y-4">
-                    <UsersSettings initialUsers={users} />
-                </TabsContent>
+                        <TabsContent value="users" className="space-y-4">
+                            <UsersSettings initialUsers={users} />
+                        </TabsContent>
+                    </>
+                )}
             </Tabs>
         </div>
     );

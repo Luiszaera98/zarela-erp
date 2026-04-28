@@ -1,7 +1,7 @@
 import { jwtVerify, type JWTPayload } from "jose";
 
-export type DbUserRole = "Admin" | "Comercial" | "Operaciones" | "Vendedor" | "Almacén";
-export type AppUserRole = "Administrador" | "Comercial" | "Operaciones";
+export type DbUserRole = "Admin" | "Comercial" | "Operaciones" | "Vendedor" | "Almacén" | "Gerente";
+export type AppUserRole = "Administrador" | "Comercial" | "Operaciones" | "Gerente";
 
 export type UserSession = {
     id: string;
@@ -34,6 +34,9 @@ export function mapRoleToDb(role: string): DbUserRole {
         case "Inventario":
         case "Almacén":
             return "Operaciones";
+        case "Gerente":
+        case "Supervisor":
+            return "Gerente";
         default:
             return "Comercial";
     }
@@ -52,6 +55,9 @@ export function mapRoleFromDb(role: string): AppUserRole {
         case "Almacén":
         case "Inventario":
             return "Operaciones";
+        case "Gerente":
+        case "Supervisor":
+            return "Gerente";
         default:
             return "Comercial";
     }
@@ -149,6 +155,14 @@ export async function requireSession(): Promise<UserSession> {
 export async function requireRole(roles: string[]): Promise<UserSession> {
     const session = await requireSession();
     const allowedRoles = roles.map(normalizeAppRole);
+
+    // Gerente automatically inherits Comercial and Operaciones actions
+    if (session.role === 'Gerente') {
+        if (allowedRoles.includes('Comercial') || allowedRoles.includes('Operaciones')) {
+            return session;
+        }
+    }
+
     if (!allowedRoles.includes(session.role)) {
         throw new Error("FORBIDDEN");
     }

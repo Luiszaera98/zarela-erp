@@ -302,7 +302,7 @@ function parseSafeDate(dateInput: string | Date | undefined): Date {
 
 export async function createExpense(data: Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>): Promise<{ success: boolean; expense?: Expense; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -351,7 +351,7 @@ export async function createExpense(data: Omit<Expense, 'id' | 'createdAt' | 'up
 
 export async function updateExpense(id: string, data: Partial<Expense>): Promise<{ success: boolean; expense?: Expense; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -419,7 +419,7 @@ export async function updateExpense(id: string, data: Partial<Expense>): Promise
 
 export async function registerExpensePayment(id: string, amount: number, paymentMethod: string, date: string, attachments?: string[]): Promise<{ success: boolean; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -467,7 +467,7 @@ export async function registerExpensePayment(id: string, amount: number, payment
 
 export async function deleteExpenseAction(id: string): Promise<{ success: boolean; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -491,7 +491,7 @@ export async function deleteExpenseAction(id: string): Promise<{ success: boolea
 
 export async function updateExpenseTransaction(id: string, data: { amount: number; paymentMethod: string; date: string; notes?: string }): Promise<{ success: boolean; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -544,7 +544,7 @@ export async function updateExpenseTransaction(id: string, data: { amount: numbe
 
 export async function deleteExpenseTransaction(id: string): Promise<{ success: boolean; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -605,7 +605,7 @@ export async function getRecurringExpenses(): Promise<RecurringExpense[]> {
 
 export async function createRecurringExpense(data: Omit<RecurringExpense, 'id' | 'createdAt' | 'updatedAt' | 'lastGenerated'>): Promise<{ success: boolean; expense?: RecurringExpense; message?: string }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
@@ -632,7 +632,7 @@ export async function createRecurringExpense(data: Omit<RecurringExpense, 'id' |
 
 export async function toggleRecurringExpense(id: string, active: boolean): Promise<{ success: boolean }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch {
         return { success: false };
     }
@@ -649,7 +649,7 @@ export async function toggleRecurringExpense(id: string, active: boolean): Promi
 
 export async function deleteRecurringExpense(id: string): Promise<{ success: boolean }> {
     try {
-        await requireRole(['Administrador']);
+        await requireRole(['Administrador', 'Gerente']);
     } catch {
         return { success: false };
     }

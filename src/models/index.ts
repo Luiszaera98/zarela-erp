@@ -605,7 +605,7 @@ export interface IUser extends Document {
     username: string;
     email?: string;
     password?: string; // In a real app, this should be hashed
-    role: 'Admin' | 'Comercial' | 'Operaciones' | 'Vendedor' | 'Almacén';
+    role: 'Admin' | 'Comercial' | 'Operaciones' | 'Vendedor' | 'Almacén' | 'Gerente';
     status: 'Activo' | 'Inactivo';
     mustChangePassword?: boolean;
     createdAt: Date;
@@ -616,7 +616,7 @@ const UserSchema = new Schema<IUser>({
     username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     email: { type: String, unique: true, sparse: true },
     password: { type: String },
-    role: { type: String, enum: ['Admin', 'Comercial', 'Operaciones', 'Vendedor', 'Almacén'], default: 'Comercial' },
+    role: { type: String, enum: ['Admin', 'Comercial', 'Operaciones', 'Vendedor', 'Almacén', 'Gerente'], default: 'Comercial' },
     status: { type: String, enum: ['Activo', 'Inactivo'], default: 'Activo' },
     mustChangePassword: { type: Boolean, default: false },
 }, { timestamps: true });

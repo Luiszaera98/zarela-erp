@@ -55,31 +55,31 @@ const navSections: NavSection[] = [
     {
         label: "Panel",
         items: [
-            { href: "/dashboard", label: "Panel Principal", icon: LayoutDashboard, roles: ['Administrador', 'Comercial', 'Operaciones'] },
+            { href: "/dashboard", label: "Panel Principal", icon: LayoutDashboard, roles: ['Administrador', 'Comercial', 'Operaciones', 'Gerente'] },
         ],
     },
     {
         label: "Operaciones",
         items: [
-            { href: "/clients", label: "Contactos", icon: UsersRound, roles: ['Administrador', 'Comercial', 'Operaciones'] },
-            { href: "/quotations", label: "Cotizaciones", icon: ClipboardList, roles: ['Administrador', 'Comercial'] },
-            { href: "/invoices", label: "Facturas", icon: FileText, roles: ['Administrador', 'Comercial'] },
-            { href: "/payments", label: "Transacciones", icon: History, roles: ['Administrador', 'Comercial'] },
+            { href: "/clients", label: "Contactos", icon: UsersRound, roles: ['Administrador', 'Comercial', 'Operaciones', 'Gerente'] },
+            { href: "/quotations", label: "Cotizaciones", icon: ClipboardList, roles: ['Administrador', 'Comercial', 'Gerente'] },
+            { href: "/invoices", label: "Facturas", icon: FileText, roles: ['Administrador', 'Comercial', 'Gerente'] },
+            { href: "/payments", label: "Transacciones", icon: History, roles: ['Administrador', 'Comercial', 'Gerente'] },
         ],
     },
     {
         label: "Catálogo",
         items: [
-            { href: "/inventory", label: "Inventario", icon: Boxes, roles: ['Administrador', 'Operaciones'] },
-            { href: "/services", label: "Servicios", icon: Wrench, roles: ['Administrador', 'Comercial'] },
+            { href: "/inventory", label: "Inventario", icon: Boxes, roles: ['Administrador', 'Operaciones', 'Gerente'] },
+            { href: "/services", label: "Servicios", icon: Wrench, roles: ['Administrador', 'Comercial', 'Gerente'] },
         ],
     },
     {
         label: "Administración",
         items: [
-            { href: "/expenses", label: "Gastos", icon: Receipt, roles: ['Administrador'] },
+            { href: "/expenses", label: "Gastos", icon: Receipt, roles: ['Administrador', 'Gerente'] },
             { href: "/ecf-logs", label: "Monitor e-CF", icon: Activity, roles: ['Administrador'] },
-            { href: "/settings", label: "Configuración", icon: Settings2, roles: ['Administrador', 'Comercial', 'Operaciones'] },
+            { href: "/settings", label: "Configuración", icon: Settings2, roles: ['Administrador', 'Comercial', 'Operaciones', 'Gerente'] },
         ],
     },
 ];
