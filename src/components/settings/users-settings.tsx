@@ -56,6 +56,11 @@ export function UsersSettings({ initialUsers }: UsersSettingsProps) {
             label: 'Operaciones',
             description: 'Ejecución operativa: contactos, inventario, entradas, salidas, ajustes y consulta de catálogo.',
         },
+        {
+            value: 'Gerente',
+            label: 'Gerente',
+            description: 'Acceso a todo el flujo comercial y operativo, excepto la configuración crítica (usuarios, secuencias, e-CF).',
+        },
     ];
 
     const handleCreate = (e: React.FormEvent) => {
