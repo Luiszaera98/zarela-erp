@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src:cached
+      - ./public:/app/public:cached
+      - ./tailwind.config.ts:/app/tailwind.config.ts:cached
+      - ./next.config.js:/app/next.config.js:cached
+      - ./tsconfig.json:/app/tsconfig.json:cached
+      - ./postcss.config.js:/app/postcss.config.js:cached
+      - ./.env.local:/app/.env.local:cached
+      # Mount host node_modules so new packages don't require image rebuild
+      - ./node_modules:/app/node_modules:cached
+      # Named volume for .next
+      - nextjs:/app/.next
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - MONGODB_URI=mongodb://${DB_USER:-admin}:${DB_PASSWORD:-password123}@mongodb:27017/zarela_erp?authSource=admin
+    command: npm run dev
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:7.0
+    container_name: zarela_mongodb
+    restart: always
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=zarela_erp
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD:-password123}
+
+volumes:
+  node_modules:
+  nextjs:
+  mongodb_data:

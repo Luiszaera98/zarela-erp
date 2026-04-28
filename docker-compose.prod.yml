@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: zarela_erp_app
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/public/uploads
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://${DB_USER}:${DB_PASSWORD}@mongodb:27017/zarela_erp?authSource=admin
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-https://erp.zarela.com}
+      - TZ=America/Santo_Domingo
+      # e-CF DGII
+      - ECF_ENVIRONMENT=${ECF_ENVIRONMENT:-CerteCF}
+      - ECF_RNC_EMISOR=${ECF_RNC_EMISOR}
+      - ECF_RAZON_SOCIAL=${ECF_RAZON_SOCIAL}
+      - ECF_DIRECCION_EMISOR=${ECF_DIRECCION_EMISOR}
+      - ECF_MUNICIPIO_EMISOR=${ECF_MUNICIPIO_EMISOR}
+      - ECF_PROVINCIA_EMISOR=${ECF_PROVINCIA_EMISOR}
+      - ECF_TELEFONO_EMISOR=${ECF_TELEFONO_EMISOR}
+      - ECF_CORREO_EMISOR=${ECF_CORREO_EMISOR}
+      - ECF_FECHA_VENCIMIENTO_SECUENCIA=${ECF_FECHA_VENCIMIENTO_SECUENCIA:-31-12-2028}
+      - ECF_CERTIFICATE_BASE64=${ECF_CERTIFICATE_BASE64}
+      - ECF_CERTIFICATE_PASSPHRASE=${ECF_CERTIFICATE_PASSPHRASE}
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:7.0
+    container_name: zarela_mongodb
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=zarela_erp
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+
+volumes:
+  mongodb_data:
+  uploads_data:

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Zarela ERP positive logo</title>
+  <desc id="desc">Positive Zarela Z mark for light backgrounds.</desc>
+  <defs>
+    <linearGradient id="navy" x1="238" y1="206" x2="756" y2="853" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#001A3D"/>
+      <stop offset="0.55" stop-color="#042B5D"/>
+      <stop offset="1" stop-color="#001F49"/>
+    </linearGradient>
+    <linearGradient id="slate" x1="160" y1="178" x2="858" y2="878" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6F7F96"/>
+      <stop offset="1" stop-color="#4D5F78"/>
+    </linearGradient>
+  </defs>
+  <path d="M226 250H780C835 250 864 306 829 350L392 806H778" fill="none" stroke="url(#navy)" stroke-width="108" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="226" cy="250" r="88" fill="url(#slate)"/>
+  <circle cx="778" cy="806" r="88" fill="url(#slate)"/>
+</svg>

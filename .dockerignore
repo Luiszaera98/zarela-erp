@@ -1,0 +1,12 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+src_backup
+backup_ui_revamp
+src_replaced_by_backup
+src_replaced_by_backup_new
+

@@ -1,0 +1,67 @@
+# ============================================================
+# Monterrey CRM — .gitignore
+# ============================================================
+
+# === Dependencias ===
+/node_modules
+/.pnp
+.pnp.js
+
+# === Next.js ===
+/.next/
+/out/
+/build
+
+# === Testing ===
+/coverage
+
+# === Variables de Entorno (NUNCA subir) ===
+.env
+.env.local
+.env.*.local
+
+# === Certificados y Secretos (NUNCA subir) ===
+*.p12
+*.pem
+*.key
+*.pfx
+*.cer
+
+# === Archivos de Desarrollo / Debug ===
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.vscode/
+.idea/
+
+# === Python (venv de scripts auxiliares) ===
+/venv/
+
+# === TypeScript Build Cache ===
+*.tsbuildinfo
+next-env.d.ts
+
+# === Docker Data ===
+docker-data/
+
+# === Vercel ===
+.vercel
+
+# === Archivos de Certificación DGII (XML de prueba, no código) ===
+/dgii_batch4_xmls/
+/dgii_rfce_xmls/
+
+# === Archivos Temporales y de Scratch ===
+/scratch/
+pdf_extracted.txt
+
+# === PDFs de Documentación Técnica (muy pesados para Git) ===
+Descripcion-tecnica-de-facturacion-electronica.pdf
+Informe Técnico e-CF v1.0.pdf

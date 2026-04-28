@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Zarela ERP negative logo</title>
+  <desc id="desc">Negative Zarela Z mark for dark backgrounds.</desc>
+  <defs>
+    <linearGradient id="white" x1="238" y1="206" x2="756" y2="853" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F3F5F8"/>
+    </linearGradient>
+    <linearGradient id="slate" x1="160" y1="178" x2="858" y2="878" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8FA0B5"/>
+      <stop offset="1" stop-color="#62728A"/>
+    </linearGradient>
+  </defs>
+  <path d="M226 250H780C835 250 864 306 829 350L392 806H778" fill="none" stroke="url(#white)" stroke-width="108" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="226" cy="250" r="88" fill="url(#slate)"/>
+  <circle cx="778" cy="806" r="88" fill="url(#slate)"/>
+</svg>
