@@ -2,7 +2,7 @@ export type ContactType = 'Cliente' | 'Proveedor' | 'Empleado' | 'Otro';
 
 export const CONTACT_TYPES: ContactType[] = ['Cliente', 'Proveedor', 'Empleado', 'Otro'];
 
-export type UserRole = 'Administrador' | 'Comercial' | 'Operaciones';
+export type UserRole = 'Administrador' | 'Comercial' | 'Operaciones' | 'Gerente';
 
 export interface Client {
     id: string;
