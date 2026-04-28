@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { demoTenantPlugin } from './demoPlugin';
 
 // ==================== CLIENT ====================
 export interface IClient extends Document {
@@ -39,6 +40,7 @@ const ClientSchema = new Schema<IClient>({
 ClientSchema.index({ status: 1 });
 ClientSchema.index({ type: 1 });
 ClientSchema.index({ contactType: 1 });
+ClientSchema.plugin(demoTenantPlugin);
 
 if (process.env.NODE_ENV === 'development' && mongoose.models.Client) {
     delete mongoose.models.Client;
@@ -78,6 +80,7 @@ const ProductSchema = new Schema<IProduct>({
 // Indexes for performance
 ProductSchema.index({ status: 1 });
 ProductSchema.index({ name: 'text', sku: 'text' }); // Text search support
+ProductSchema.plugin(demoTenantPlugin);
 
 // Text search support
 
@@ -113,6 +116,7 @@ const ServiceSchema = new Schema<IService>({
 
 ServiceSchema.index({ status: 1 });
 ServiceSchema.index({ name: 'text', code: 'text', category: 'text' });
+ServiceSchema.plugin(demoTenantPlugin);
 
 if (process.env.NODE_ENV === 'development' && mongoose.models.Service) {
     delete mongoose.models.Service;
@@ -233,6 +237,7 @@ InvoiceSchema.index({ date: -1 });
 InvoiceSchema.index({ clientId: 1 });
 InvoiceSchema.index({ status: 1 });
 InvoiceSchema.index({ createdAt: -1 });
+InvoiceSchema.plugin(demoTenantPlugin);
 
 // Force model recompilation in development to apply schema changes
 if (process.env.NODE_ENV === 'development' && mongoose.models.Invoice) {
@@ -281,6 +286,7 @@ const QuotationSchema = new Schema<IQuotation>({
 QuotationSchema.index({ date: -1 });
 QuotationSchema.index({ clientId: 1 });
 QuotationSchema.index({ status: 1 });
+QuotationSchema.plugin(demoTenantPlugin);
 
 if (process.env.NODE_ENV === 'development' && mongoose.models.Quotation) {
     delete mongoose.models.Quotation;
@@ -316,6 +322,7 @@ const PaymentSchema = new Schema<IPayment>({
 PaymentSchema.index({ paymentDate: -1 });
 PaymentSchema.index({ invoiceId: 1 });
 PaymentSchema.index({ invoiceNumber: 1 });
+PaymentSchema.plugin(demoTenantPlugin);
 
 
 export const Payment: Model<IPayment> = mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema);
@@ -385,6 +392,7 @@ const CreditNoteSchema = new Schema<ICreditNote>({
 // Indexes for performance
 CreditNoteSchema.index({ originalInvoiceId: 1 });
 CreditNoteSchema.index({ date: -1 });
+CreditNoteSchema.plugin(demoTenantPlugin);
 
 // Force model recompilation in development to apply schema changes
 if (process.env.NODE_ENV === 'development' && mongoose.models.CreditNote) {
@@ -458,6 +466,7 @@ const DebitNoteSchema = new Schema<IDebitNote>({
 // Indexes for performance
 DebitNoteSchema.index({ originalInvoiceId: 1 });
 DebitNoteSchema.index({ date: -1 });
+DebitNoteSchema.plugin(demoTenantPlugin);
 
 // Force model recompilation in development to apply schema changes
 if (process.env.NODE_ENV === 'development' && mongoose.models.DebitNote) {
@@ -525,6 +534,7 @@ const ExpenseSchema = new Schema<IExpense>({
 // Indexes for performance
 ExpenseSchema.index({ date: -1 });
 ExpenseSchema.index({ category: 1 });
+ExpenseSchema.plugin(demoTenantPlugin);
 
 if (process.env.NODE_ENV === 'development' && mongoose.models.Expense) {
     delete mongoose.models.Expense;
@@ -554,6 +564,7 @@ const ExpenseTransactionSchema = new Schema<IExpenseTransaction>({
 
 ExpenseTransactionSchema.index({ expenseId: 1 });
 ExpenseTransactionSchema.index({ date: -1 });
+ExpenseTransactionSchema.plugin(demoTenantPlugin);
 
 export const ExpenseTransaction: Model<IExpenseTransaction> = mongoose.models.ExpenseTransaction || mongoose.model<IExpenseTransaction>('ExpenseTransaction', ExpenseTransactionSchema);
 
@@ -583,6 +594,8 @@ const RecurringExpenseSchema = new Schema<IRecurringExpense>({
     active: { type: Boolean, default: true },
     lastGenerated: { type: Date },
 }, { timestamps: true });
+
+RecurringExpenseSchema.plugin(demoTenantPlugin);
 
 export const RecurringExpense: Model<IRecurringExpense> = mongoose.models.RecurringExpense || mongoose.model<IRecurringExpense>('RecurringExpense', RecurringExpenseSchema);
 
@@ -669,6 +682,7 @@ const InventoryMovementSchema = new Schema<IInventoryMovement>({
 InventoryMovementSchema.index({ productId: 1 });
 InventoryMovementSchema.index({ date: -1 });
 InventoryMovementSchema.index({ type: 1 });
+InventoryMovementSchema.plugin(demoTenantPlugin);
 
 export const InventoryMovement: Model<IInventoryMovement> = mongoose.models.InventoryMovement || mongoose.model<IInventoryMovement>('InventoryMovement', InventoryMovementSchema);
 
