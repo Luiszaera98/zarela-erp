@@ -51,6 +51,10 @@ function getInvoiceStatusAfterBalanceChange(invoice: { total: number; paidAmount
     return 'Pendiente';
 }
 
+function hasDgiiSubmission(doc: { ecfTrackId?: string; ecfSignedXml?: string }) {
+    return Boolean(doc.ecfTrackId || doc.ecfSignedXml);
+}
+
 // Helper to convert MongoDB document to Payment type
 function mapPayment(doc: any): Payment {
     return {
@@ -499,6 +503,10 @@ export async function updateCreditNote(id: string, data: {
             throw new Error("Nota de crédito no encontrada");
         }
 
+        if (hasDgiiSubmission(creditNote)) {
+            throw new Error("Esta nota de crédito ya fue enviada a la DGII y no puede editarse.");
+        }
+
         const invoice = await InvoiceModel.findById(creditNote.originalInvoiceId).session(session || null);
         if (!invoice) {
             throw new Error("Factura original no encontrada");
@@ -606,6 +614,10 @@ export async function deleteCreditNote(id: string): Promise<{ success: boolean; 
         const creditNote = await CreditNoteModel.findById(id).session(session || null);
         if (!creditNote) {
             throw new Error("Nota de crédito no encontrada");
+        }
+
+        if (hasDgiiSubmission(creditNote)) {
+            throw new Error("Esta nota de crédito ya fue enviada a la DGII y no puede eliminarse.");
         }
 
         // 1. Revert Stock (Deduct what was added)
@@ -889,6 +901,10 @@ export async function deleteDebitNote(id: string): Promise<{ success: boolean; m
         const debitNote = await DebitNoteModel.findById(id).session(session || null);
         if (!debitNote) {
             throw new Error("Nota de débito no encontrada");
+        }
+
+        if (hasDgiiSubmission(debitNote)) {
+            throw new Error("Esta nota de débito ya fue enviada a la DGII y no puede eliminarse.");
         }
 
         // 1. Revert Stock (Debit subtracted, so we ADD back)

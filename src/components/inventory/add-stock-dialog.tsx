@@ -94,11 +94,11 @@ export function AddStockDialog({ product, open, onOpenChange, onSuccess }: AddSt
                         />
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
                             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Agregar Stock
                         </Button>

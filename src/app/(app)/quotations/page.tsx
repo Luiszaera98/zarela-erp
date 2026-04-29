@@ -326,6 +326,7 @@ export default function QuotationsPage() {
         const canSend = quotation.status === 'Pendiente';
         const canReject = quotation.status === 'Enviada';
         const canConvert = quotation.status === 'Enviada';
+        const canDelete = quotation.status === 'Pendiente' || quotation.status === 'Rechazada';
 
         return (
             <DropdownMenu>
@@ -373,14 +374,18 @@ export default function QuotationsPage() {
                             Crear Factura
                         </DropdownMenuItem>
                     )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={() => setDeleteQuotation(quotation)}
-                        className="text-destructive focus:text-destructive"
-                    >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Eliminar
-                    </DropdownMenuItem>
+                    {canDelete && (
+                        <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                onClick={() => setDeleteQuotation(quotation)}
+                                className="text-destructive focus:text-destructive"
+                            >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Eliminar
+                            </DropdownMenuItem>
+                        </>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         );
@@ -395,20 +400,20 @@ export default function QuotationsPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-4 md:space-y-8">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Cotizaciones</h1>
-                    <p className="text-muted-foreground mt-1">Prepare propuestas comerciales antes de facturar.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Cotizaciones</h1>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">Prepare propuestas comerciales antes de facturar.</p>
                 </div>
-                <Button className="gap-2" onClick={() => setIsCreateDialogOpen(true)}>
+                <Button className="w-full gap-2 sm:w-auto" onClick={() => setIsCreateDialogOpen(true)}>
                     <PlusCircle className="h-5 w-5" />
                     Nueva Cotización
                 </Button>
             </div>
 
-            <Card className="border-none shadow-md bg-card/50 backdrop-blur-sm">
-                <CardHeader className="pb-4">
+            <Card className="border shadow-sm bg-card md:border-none md:bg-card/50 md:shadow-md md:backdrop-blur-sm">
+                <CardHeader className="p-4 pb-3 md:p-6 md:pb-4">
                     <div className="relative w-full sm:max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -419,7 +424,7 @@ export default function QuotationsPage() {
                         />
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                     <div className="rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader className="bg-muted/50">
@@ -476,7 +481,7 @@ export default function QuotationsPage() {
             </Card>
 
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[92svh] overflow-y-auto sm:max-w-5xl">
                     <DialogHeader>
                         <DialogTitle>Nueva Cotización</DialogTitle>
                         <DialogDescription>Complete la propuesta comercial sin afectar inventario ni cuentas por cobrar.</DialogDescription>
@@ -509,14 +514,14 @@ export default function QuotationsPage() {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <Label>Productos/Servicios</Label>
-                                <div className="flex gap-2">
-                                    <Button type="button" onClick={addItem} size="sm" variant="outline">
+                                <div className="grid grid-cols-2 gap-2 sm:flex">
+                                    <Button type="button" onClick={addItem} size="sm" variant="outline" className="w-full sm:w-auto">
                                         <PlusCircle className="h-4 w-4 mr-2" />
                                         Producto
                                     </Button>
-                                    <Button type="button" onClick={addService} size="sm" variant="outline">
+                                    <Button type="button" onClick={addService} size="sm" variant="outline" className="w-full sm:w-auto">
                                         <PlusCircle className="h-4 w-4 mr-2" />
                                         Servicio
                                     </Button>
@@ -525,7 +530,7 @@ export default function QuotationsPage() {
 
                             <div className="space-y-3">
                                 {items.map((item, index) => (
-                                    <div key={index} className="grid grid-cols-12 gap-3 items-end p-3 border rounded-md bg-muted/20">
+                                    <div key={index} className="grid grid-cols-12 gap-3 items-end rounded-md border bg-muted/20 p-3">
                                         <div className="col-span-12 md:col-span-5 space-y-2">
                                             {item.itemType === 'service' ? (
                                                 <>
@@ -638,16 +643,16 @@ export default function QuotationsPage() {
                             <Textarea id="quotation-notes" value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} placeholder="Términos, condiciones o vigencia comercial" />
                         </div>
 
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)} disabled={isSaving}>Cancelar</Button>
-                            <Button type="submit" disabled={isSaving}>{isSaving ? "Creando..." : "Crear Cotización"}</Button>
+                        <DialogFooter className="gap-2">
+                            <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)} disabled={isSaving} className="w-full sm:w-auto">Cancelar</Button>
+                            <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">{isSaving ? "Creando..." : "Crear Cotización"}</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
             </Dialog>
 
             <Dialog open={!!viewQuotation} onOpenChange={(open) => !open && setViewQuotation(null)}>
-                <DialogContent className="max-w-3xl">
+                <DialogContent className="sm:max-w-3xl">
                     <DialogHeader className="flex flex-row items-center justify-between gap-4">
                         <div>
                             <DialogTitle>{viewQuotation?.number}</DialogTitle>
@@ -665,7 +670,7 @@ export default function QuotationsPage() {
                     </DialogHeader>
                     {viewQuotation && (
                         <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="grid gap-4 text-sm sm:grid-cols-2">
                                 <div>
                                     <span className="text-muted-foreground">Fecha:</span>
                                     <p className="font-medium">{format(new Date(viewQuotation.date), 'dd MMM yyyy', { locale: es })}</p>
@@ -675,7 +680,7 @@ export default function QuotationsPage() {
                                     <p className="font-medium">{format(new Date(viewQuotation.validUntil), 'dd MMM yyyy', { locale: es })}</p>
                                 </div>
                             </div>
-                            <div className="rounded-md border">
+                            <div className="rounded-md border overflow-hidden">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -730,7 +735,7 @@ export default function QuotationsPage() {
             </AlertDialog>
 
             <Dialog open={!!convertQuotation} onOpenChange={(open) => !open && setConvertQuotation(null)}>
-                <DialogContent className="max-w-lg">
+                <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
                         <DialogTitle>Crear factura desde cotización</DialogTitle>
                         <DialogDescription>
@@ -763,11 +768,11 @@ export default function QuotationsPage() {
                             />
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setConvertQuotation(null)} disabled={isConverting}>
+                    <DialogFooter className="gap-2">
+                        <Button variant="outline" onClick={() => setConvertQuotation(null)} disabled={isConverting} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button onClick={handleConvertToInvoice} disabled={isConverting}>
+                        <Button onClick={handleConvertToInvoice} disabled={isConverting} className="w-full sm:w-auto">
                             {isConverting ? "Creando..." : "Crear Factura"}
                         </Button>
                     </DialogFooter>

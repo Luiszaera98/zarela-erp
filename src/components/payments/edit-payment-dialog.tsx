@@ -115,7 +115,7 @@ export function EditPaymentDialog({ open, onOpenChange, payment, onSuccess }: Ed
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="date">Fecha</Label>
                             <Input
@@ -162,11 +162,11 @@ export function EditPaymentDialog({ open, onOpenChange, payment, onSuccess }: Ed
                         />
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Guardar Cambios
                         </Button>

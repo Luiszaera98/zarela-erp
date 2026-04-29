@@ -315,7 +315,7 @@ export function EditInvoiceDialog({ invoice, open, onOpenChange, onSuccess }: Ed
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-5xl">
                 <DialogHeader>
                     <DialogTitle>Editar Factura {invoice.number}</DialogTitle>
                     <DialogDescription>
@@ -623,11 +623,11 @@ export function EditInvoiceDialog({ invoice, open, onOpenChange, onSuccess }: Ed
                         />
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                             {isLoading ? "Guardando..." : "Guardar Cambios"}
                         </Button>
                     </DialogFooter>

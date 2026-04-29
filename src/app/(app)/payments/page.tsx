@@ -244,16 +244,16 @@ export default function TransactionsHistoryPage() {
     }
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 bg-slate-50/50 min-h-screen rounded-xl">
+        <div className="mx-auto max-w-7xl space-y-4 rounded-xl bg-slate-50/50 p-0 min-h-screen md:space-y-8 md:p-6">
             {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-800">Historial de Transacciones</h1>
-                    <p className="text-slate-500 mt-1">
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-800 md:text-4xl">Transacciones</h1>
+                    <p className="mt-1 text-sm text-slate-500 md:text-base">
                         Flujo de caja completo: Ingresos, Gastos y Ajustes
                     </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
                     <MonthPicker
                         currentMonth={selectedMonth}
                         currentYear={selectedYear}
@@ -264,7 +264,7 @@ export default function TransactionsHistoryPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-4 md:gap-4">
                 <Card className="border-slate-100 shadow-sm bg-white">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium text-slate-600">Flujo de Caja Neto</CardTitle>
@@ -331,8 +331,8 @@ export default function TransactionsHistoryPage() {
                 <CardHeader className="border-b border-slate-100 pb-4">
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <CardTitle className="text-lg font-semibold text-slate-800">Movimientos</CardTitle>
-                        <div className="flex items-center gap-2">
-                            <div className="relative max-w-sm">
+                        <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
+                            <div className="relative w-full sm:max-w-sm">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
                                 <Input
                                     type="search"
@@ -345,7 +345,7 @@ export default function TransactionsHistoryPage() {
                                     }}
                                 />
                             </div>
-                            <Button variant="outline" size="sm" className="border-slate-200 text-slate-600 hover:bg-slate-50">
+                            <Button variant="outline" size="sm" className="w-full border-slate-200 text-slate-600 hover:bg-slate-50 sm:w-auto">
                                 <Download className="h-4 w-4 mr-2" />
                                 Exportar
                             </Button>
@@ -474,11 +474,11 @@ export default function TransactionsHistoryPage() {
 
                     {/* Pagination Controls */}
                     {totalPages > 1 && (
-                        <div className="flex items-center justify-end space-x-2 py-4 px-4 border-t border-slate-100">
+                        <div className="flex flex-col gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-end sm:space-x-2">
                             <div className="flex-1 text-sm text-muted-foreground">
                                 Página {page} de {totalPages}
                             </div>
-                            <div className="space-x-2">
+                            <div className="grid grid-cols-2 gap-2 sm:block sm:space-x-2">
                                 <Button
                                     variant="outline"
                                     size="sm"

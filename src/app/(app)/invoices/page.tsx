@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Search, FileText, Eye, Edit, Trash2, DollarSign, FileX, Calendar, Download, Filter, ChevronLeft, ChevronRight, CheckSquare, X } from 'lucide-react';
+import { PlusCircle, Search, FileText, Eye, Edit, Trash2, DollarSign, FileX, Download, Filter, CheckSquare, X, Send, Loader2 } from 'lucide-react';
 import { getInvoices, deleteInvoiceAction, fixInvoiceBalances } from '@/lib/actions/invoiceActions';
 import { getAllCreditNotes, deleteCreditNote, getAllDebitNotes, deleteDebitNote } from '@/lib/actions/paymentActions';
 import { syncNCFSequences } from '@/lib/actions/settingsActions';
@@ -32,6 +32,7 @@ import { MonthPicker } from '@/components/ui/month-picker';
 import { EcfActionButtons } from '@/components/invoices/ecf-action-buttons';
 import { EmailIcon, WhatsAppIcon } from '@/components/share-icons';
 import { shareInvoicePdf } from '@/lib/pdf/sharePdf';
+import { sendBulkECF } from '@/lib/actions/ecfActions';
 
 type FiscalDocument = 
     | (Invoice & { documentType: 'invoice' }) 
@@ -74,6 +75,7 @@ export default function InvoicesPage() {
     const [viewDebitNote, setViewDebitNote] = useState<any | null>(null);
     const [debitNoteToDelete, setDebitNoteToDelete] = useState<any | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isBulkSending, setIsBulkSending] = useState(false);
 
     const handleDeleteCreditNote = async () => {
         if (!creditNoteToDelete) return;
@@ -233,6 +235,40 @@ export default function InvoicesPage() {
         }
     };
 
+    const isDgiiLocked = (doc: any) => Boolean(doc.ecfTrackId || doc.ecfSignedXml);
+
+    const selectedDocuments = documents.filter(doc => selectedInvoices.includes(doc.id));
+    const selectedBulkSendCandidates = selectedDocuments.filter(doc =>
+        doc.documentType === 'invoice' &&
+        doc.ncfType?.startsWith('E') &&
+        !isDgiiLocked(doc)
+    ) as Invoice[];
+
+    const handleBulkSendECF = async () => {
+        if (selectedBulkSendCandidates.length === 0) {
+            toast({
+                title: "Sin facturas elegibles",
+                description: "Seleccione facturas electrónicas que aún no hayan sido enviadas a la DGII.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setIsBulkSending(true);
+        const result = await sendBulkECF(selectedBulkSendCandidates.map(invoice => invoice.id));
+        setIsBulkSending(false);
+
+        toast({
+            title: result.failed > 0 ? "Envío masivo completado con errores" : "Envío masivo completado",
+            description: result.message,
+            variant: result.failed > 0 && result.sent === 0 ? "destructive" : "default",
+        });
+
+        setSelectedInvoices([]);
+        setIsSelectionMode(false);
+        fetchInvoices();
+    };
+
     const toggleSelectionMode = () => {
         if (isSelectionMode) {
             setIsSelectionMode(false);
@@ -345,13 +381,13 @@ export default function InvoicesPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-4 md:space-y-8">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Facturas</h1>
-                    <p className="text-muted-foreground mt-1">Gestione sus facturas y cuentas por cobrar.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Facturas</h1>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">Gestione sus facturas y cuentas por cobrar.</p>
                 </div>
-                <div className="flex gap-2 items-center flex-wrap">
+                <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
                     <MonthPicker
                         currentMonth={selectedMonth}
                         currentYear={selectedYear}
@@ -362,7 +398,7 @@ export default function InvoicesPage() {
                     <Button
                         variant={isSelectionMode ? "secondary" : "outline"}
                         onClick={toggleSelectionMode}
-                        className="gap-2"
+                        className="w-full gap-2 sm:w-auto"
                     >
                         {isSelectionMode ? <X className="h-4 w-4" /> : <CheckSquare className="h-4 w-4" />}
                         {isSelectionMode ? "Cancelar" : "Seleccionar"}
@@ -371,15 +407,27 @@ export default function InvoicesPage() {
                     <Button
                         variant="outline"
                         onClick={exportToExcel}
-                        className="gap-2"
+                        className="w-full gap-2 sm:w-auto"
                         disabled={isSelectionMode && selectedInvoices.length === 0}
                     >
                         <Download className="h-4 w-4" />
                         Exportar {selectedInvoices.length > 0 ? `(${selectedInvoices.length})` : ''}
                     </Button>
 
+                    {isSelectionMode && (
+                        <Button
+                            variant="outline"
+                            onClick={handleBulkSendECF}
+                            className="w-full gap-2 border-blue-500 text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950 sm:w-auto"
+                            disabled={isBulkSending || selectedBulkSendCandidates.length === 0}
+                        >
+                            {isBulkSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                            Enviar DGII {selectedBulkSendCandidates.length > 0 ? `(${selectedBulkSendCandidates.length})` : ''}
+                        </Button>
+                    )}
+
                     <Button
-                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto"
                         onClick={() => setIsCreateDialogOpen(true)}
                     >
                         <PlusCircle className="mr-2 h-5 w-5" /> Nueva Factura
@@ -387,9 +435,9 @@ export default function InvoicesPage() {
                 </div>
             </div>
 
-            <Card className="border-none shadow-md bg-card/50 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                    <div className="flex flex-col sm:flex-row gap-4 justify-between">
+            <Card className="border shadow-sm bg-card md:border-none md:bg-card/50 md:shadow-md md:backdrop-blur-sm">
+                <CardHeader className="p-4 pb-3 md:p-6 md:pb-4">
+                    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-between md:gap-4">
                         <div className="relative w-full sm:max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
@@ -402,7 +450,7 @@ export default function InvoicesPage() {
                         <div className="flex items-center gap-2">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="border-dashed">
+                                    <Button variant="outline" className="w-full border-dashed sm:w-auto">
                                         <Filter className="mr-2 h-4 w-4" />
                                         Estado
                                         {statusFilters.length > 0 && (
@@ -450,7 +498,7 @@ export default function InvoicesPage() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                     <div className="rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader className="bg-muted/50">
@@ -484,6 +532,7 @@ export default function InvoicesPage() {
                                         const isDebitNote = doc.documentType === 'debitNote';
                                         const invoice = isInvoice ? (doc as Invoice) : null;
                                         const isSelected = selectedInvoices.includes(doc.id);
+                                        const lockedByDgii = isDgiiLocked(doc);
 
                                         return (
                                             <TableRow key={`${doc.documentType}-${doc.id}`} className="hover:bg-muted/30">
@@ -582,10 +631,12 @@ export default function InvoicesPage() {
                                                                     <Eye className="h-4 w-4 mr-2" />
                                                                     Ver Detalles
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => setEditInvoice(invoice)}>
-                                                                    <Edit className="h-4 w-4 mr-2" />
-                                                                    Editar
-                                                                </DropdownMenuItem>
+                                                                {!lockedByDgii && (
+                                                                    <DropdownMenuItem onClick={() => setEditInvoice(invoice)}>
+                                                                        <Edit className="h-4 w-4 mr-2" />
+                                                                        Editar
+                                                                    </DropdownMenuItem>
+                                                                )}
                                                                 <DropdownMenuItem onClick={() => shareInvoice(invoice, 'whatsapp')}>
                                                                     <WhatsAppIcon className="h-4 w-4 mr-2 text-green-600" />
                                                                     Enviar PDF por WhatsApp
@@ -616,14 +667,18 @@ export default function InvoicesPage() {
                                                                     <PlusCircle className="h-4 w-4 mr-2" />
                                                                     Crear Nota de Débito
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem
-                                                                    onClick={() => setDeleteInvoice(doc)}
-                                                                    className="text-destructive focus:text-destructive"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Eliminar
-                                                                </DropdownMenuItem>
+                                                                {!lockedByDgii && (
+                                                                    <>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem
+                                                                            onClick={() => setDeleteInvoice(doc)}
+                                                                            className="text-destructive focus:text-destructive"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                                            Eliminar
+                                                                        </DropdownMenuItem>
+                                                                    </>
+                                                                )}
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
                                                     ) : isCreditNote ? (
@@ -640,18 +695,22 @@ export default function InvoicesPage() {
                                                                     <Eye className="h-4 w-4 mr-2" />
                                                                     Ver Detalles
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => setEditCreditNote(doc as CreditNote)}>
-                                                                    <Edit className="h-4 w-4 mr-2" />
-                                                                    Editar
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem
-                                                                    onClick={() => setCreditNoteToDelete(doc as CreditNote)}
-                                                                    className="text-destructive focus:text-destructive"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Eliminar
-                                                                </DropdownMenuItem>
+                                                                {!lockedByDgii && (
+                                                                    <>
+                                                                        <DropdownMenuItem onClick={() => setEditCreditNote(doc as CreditNote)}>
+                                                                            <Edit className="h-4 w-4 mr-2" />
+                                                                            Editar
+                                                                        </DropdownMenuItem>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem
+                                                                            onClick={() => setCreditNoteToDelete(doc as CreditNote)}
+                                                                            className="text-destructive focus:text-destructive"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                                            Eliminar
+                                                                        </DropdownMenuItem>
+                                                                    </>
+                                                                )}
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
                                                     ) : isDebitNote ? (
@@ -672,14 +731,18 @@ export default function InvoicesPage() {
                                                                     <FileText className="h-4 w-4 mr-2" />
                                                                     Imprimir
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem
-                                                                    onClick={() => setDeleteInvoice(doc)}
-                                                                    className="text-destructive focus:text-destructive"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Eliminar
-                                                                </DropdownMenuItem>
+                                                                {!lockedByDgii && (
+                                                                    <>
+                                                                        <DropdownMenuSeparator />
+                                                                        <DropdownMenuItem
+                                                                            onClick={() => setDeleteInvoice(doc)}
+                                                                            className="text-destructive focus:text-destructive"
+                                                                        >
+                                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                                            Eliminar
+                                                                        </DropdownMenuItem>
+                                                                    </>
+                                                                )}
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
                                                     ) : (
@@ -702,11 +765,11 @@ export default function InvoicesPage() {
                             </TableBody>
                         </Table>
                     </div>
-                    <div className="flex items-center justify-between space-x-2 py-4">
+                    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:space-x-2">
                         <div className="text-sm text-muted-foreground">
                             Mostrando {paginatedDocuments.length} de {filteredDocuments.length} resultados
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:space-x-2">
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -715,7 +778,7 @@ export default function InvoicesPage() {
                             >
                                 Anterior
                             </Button>
-                            <div className="text-sm font-medium">
+                            <div className="col-span-2 text-center text-sm font-medium sm:col-span-1">
                                 Página {currentPage} de {totalPages || 1}
                             </div>
                             <Button

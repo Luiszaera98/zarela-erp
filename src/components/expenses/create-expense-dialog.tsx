@@ -457,11 +457,11 @@ export function CreateExpenseDialog({ onSuccess }: CreateExpenseDialogProps) {
                         </section>
                     </div>
 
-                    <DialogFooter className="border-t bg-background px-6 py-4">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    <DialogFooter className="gap-2 border-t bg-background px-4 py-4 sm:px-6">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading || isUploading}>
+                        <Button type="submit" disabled={isLoading || isUploading} className="w-full sm:w-auto">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Guardar Gasto
                         </Button>

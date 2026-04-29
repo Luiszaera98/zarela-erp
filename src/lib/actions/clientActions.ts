@@ -100,7 +100,6 @@ export async function createClient(data: Omit<Client, 'id' | 'createdAt' | 'upda
         return { success: false, message: getAuthErrorMessage(error) };
     }
     await dbConnect();
-    await dbConnect();
     try {
         const newClient = await ClientModel.create({
             name: data.name,
@@ -129,7 +128,6 @@ export async function updateClient(id: string, data: Partial<Client>): Promise<{
     } catch (error) {
         return { success: false, message: getAuthErrorMessage(error) };
     }
-    await dbConnect();
     await dbConnect();
     try {
         const updateData: any = {};

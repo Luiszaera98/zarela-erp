@@ -51,7 +51,7 @@ interface NavSection {
     items: NavItem[];
 }
 
-const navSections: NavSection[] = [
+export const navSections: NavSection[] = [
     {
         label: "Panel",
         items: [

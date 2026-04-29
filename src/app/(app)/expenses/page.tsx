@@ -152,14 +152,14 @@ export default function ExpensesPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8">
             {/* Header with Title and Add Button */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Gastos</h1>
-                    <p className="text-muted-foreground mt-1">Gestión financiera de egresos y reportes e-CF.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Gastos</h1>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">Gestión financiera de egresos y reportes e-CF.</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
                     <MonthPicker
                         currentMonth={selectedMonth}
                         currentYear={selectedYear}
@@ -171,7 +171,7 @@ export default function ExpensesPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <p className="text-sm font-medium">Total del Mes</p>
@@ -203,7 +203,7 @@ export default function ExpensesPage() {
 
             {/* Main Content Area */}
             <Tabs defaultValue="list" className="w-full">
-                <TabsList className="mb-4">
+                <TabsList className="mb-4 grid h-auto w-full grid-cols-2 sm:inline-flex sm:w-auto">
                     <TabsTrigger value="list">Listado de Gastos</TabsTrigger>
                     <TabsTrigger value="recurring">Gastos Recurrentes</TabsTrigger>
                 </TabsList>
@@ -212,7 +212,7 @@ export default function ExpensesPage() {
                     {/* Filter Bar */}
                     <Card>
                         <CardHeader className="pb-4">
-                            <div className="flex flex-col md:flex-row gap-4 justify-between">
+                            <div className="flex flex-col gap-3 md:flex-row md:justify-between md:gap-4">
                                 <div className="relative w-full md:max-w-md">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -222,9 +222,9 @@ export default function ExpensesPage() {
                                         className="pl-10"
                                     />
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                     <Select value={statusFilter} onValueChange={handleStatusChange}>
-                                        <SelectTrigger className="w-[180px]">
+                                        <SelectTrigger className="w-full sm:w-[180px]">
                                             <SelectValue placeholder="Estado" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -235,7 +235,7 @@ export default function ExpensesPage() {
                                         </SelectContent>
                                     </Select>
                                     <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-                                        <SelectTrigger className="w-[180px]">
+                                        <SelectTrigger className="w-full sm:w-[180px]">
                                             <SelectValue placeholder="Categoría" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -253,7 +253,7 @@ export default function ExpensesPage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="rounded-md border">
+                            <div className="rounded-md border overflow-hidden">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -372,11 +372,11 @@ export default function ExpensesPage() {
                             </div>
 
                             {/* Pagination Controls */}
-                            <div className="flex items-center justify-end space-x-2 py-4">
+                            <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-end sm:space-x-2">
                                 <div className="flex-1 text-sm text-muted-foreground">
                                     Página {page} de {totalPages} ({totalExpensesCount} registros)
                                 </div>
-                                <div className="space-x-2">
+                                <div className="grid grid-cols-2 gap-2 sm:block sm:space-x-2">
                                     <Button
                                         variant="outline"
                                         size="sm"

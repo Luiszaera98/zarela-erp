@@ -85,4 +85,34 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    @media (max-width: 640px) {
+        main {
+            min-width: 0;
+        }
+
+        input,
+        select,
+        textarea {
+            font-size: 16px;
+        }
+
+        [data-radix-tabs-list] {
+            scrollbar-width: none;
+        }
+
+        [data-radix-tabs-list]::-webkit-scrollbar {
+            display: none;
+        }
+
+        [role="dialog"] form [class*="grid-cols-2"] {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+    }
 }

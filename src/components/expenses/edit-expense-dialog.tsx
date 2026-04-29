@@ -232,8 +232,8 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2 col-span-2">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="description">Descripción / Concepto</Label>
                             <Input
                                 id="description"
@@ -304,9 +304,9 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                             </Select>
                         </div>
 
-                        <div className="space-y-2 col-span-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="supplierName">Proveedor / Beneficiario</Label>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col gap-2 sm:flex-row">
                                 <div className="flex-1">
                                     <Input
                                         id="supplierName"
@@ -316,7 +316,7 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                                         onChange={handleChange}
                                     />
                                 </div>
-                                <div className="w-1/3">
+                                <div className="w-full sm:w-1/3">
                                     <Select onValueChange={handleContactSelect}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Proveedores" />
@@ -350,12 +350,12 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                         </div>
 
                         {/* e-CF Reporting Section */}
-                        <div className="col-span-2 p-3 border rounded-md bg-muted/30 space-y-3">
+                        <div className="space-y-3 rounded-md border bg-muted/30 p-3 sm:col-span-2">
                             <div className="flex items-center gap-2">
                                 <Receipt className="h-4 w-4 text-primary" />
                                 <span className="text-sm font-bold">Resumen Fiscal (DGII)</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="ncfType" className="text-xs">Tipo de Comprobante</Label>
                                     <Select
@@ -396,7 +396,7 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                             </div>
                         </div>
 
-                        <div className="space-y-2 col-span-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="paymentMethod">Método de Pago</Label>
                             <Select
                                 value={formData.paymentMethod}
@@ -414,7 +414,7 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                             </Select>
                         </div>
 
-                        <div className="space-y-2 col-span-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label>Archivo Adjunto</Label>
                             {!attachment ? (
                                 <div className="flex items-center gap-2">
@@ -452,7 +452,7 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                             )}
                         </div>
 
-                        <div className="space-y-2 col-span-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="notes">Notas</Label>
                             <Textarea
                                 id="notes"
@@ -463,11 +463,11 @@ export function EditExpenseDialog({ expense, open, onOpenChange, onSuccess }: Ed
                             />
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading || isUploading}>
+                        <Button type="submit" disabled={isLoading || isUploading} className="w-full sm:w-auto">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Guardar Cambios
                         </Button>

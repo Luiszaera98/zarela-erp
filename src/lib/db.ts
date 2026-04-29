@@ -1,43 +1,84 @@
 import mongoose from 'mongoose';
 
-type ConnectionObject = {
-    isConnected?: number;
+type MongooseCache = {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
 };
 
-const connection: ConnectionObject = {};
+declare global {
+    // eslint-disable-next-line no-var
+    var mongooseCache: MongooseCache | undefined;
+}
 
-async function dbConnect(): Promise<void> {
-    if (mongoose.connections.length > 0) {
-        if (mongoose.connections[0].readyState === 1) {
-            // console.log('Already connected to database');
-            return;
-        }
-        await mongoose.disconnect();
+const cached: MongooseCache = global.mongooseCache || {
+    conn: null,
+    promise: null,
+};
+
+if (!global.mongooseCache) {
+    global.mongooseCache = cached;
+}
+
+function maskMongoUri(uri: string) {
+    return uri.replace(/:([^:@]+)@/, ':****@');
+}
+
+function getConnectionUris() {
+    const primaryUri = process.env.MONGODB_URI;
+    if (!primaryUri) {
+        throw new Error('MONGODB_URI no está definida. No se puede conectar a MongoDB.');
     }
 
-    if (!process.env.MONGODB_URI) {
-        console.warn('MONGODB_URI not defined. Skipping database connection (likely build time).');
+    const uris = [primaryUri];
+    const isLocalRuntime = process.env.NODE_ENV !== 'production';
+    if (isLocalRuntime && primaryUri.includes('@mongodb:27017')) {
+        uris.push(primaryUri.replace('@mongodb:27017', '@127.0.0.1:27018'));
+    } else if (isLocalRuntime && primaryUri.includes('//mongodb:27017')) {
+        uris.push(primaryUri.replace('//mongodb:27017', '//127.0.0.1:27018'));
+    }
+
+    return Array.from(new Set(uris));
+}
+
+async function connectWithFallback() {
+    const uris = getConnectionUris();
+    let lastError: unknown;
+
+    for (const uri of uris) {
+        try {
+            console.log("Attempting to connect to MongoDB...");
+            console.log(`Connection URI: ${maskMongoUri(uri)}`);
+
+            const mongooseInstance = await mongoose.connect(uri, {
+                dbName: 'zarela_erp',
+                bufferCommands: false,
+                serverSelectionTimeoutMS: 5000,
+            });
+
+            console.log('Database connected successfully');
+            return mongooseInstance;
+        } catch (error: any) {
+            lastError = error;
+            console.error(`Database connection failed for ${maskMongoUri(uri)}:`, error?.message || error);
+        }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error('No se pudo conectar a MongoDB.');
+}
+
+async function dbConnect(): Promise<void> {
+    if (cached.conn && mongoose.connection.readyState === 1) {
         return;
     }
 
-    try {
-        console.log("Attempting to connect to MongoDB...");
-        // Mask password in logs
-        const uriLog = (process.env.MONGODB_URI || '').replace(/:([^:@]+)@/, ':****@');
-        console.log(`Connection URI: ${uriLog}`);
-
-        const db = await mongoose.connect(process.env.MONGODB_URI || '', {
-            dbName: 'zarela_erp',
-            bufferCommands: false,
-            serverSelectionTimeoutMS: 5000, // Fail fast for debugging
+    if (!cached.promise) {
+        cached.promise = connectWithFallback().catch((error) => {
+            cached.promise = null;
+            throw error;
         });
-
-        connection.isConnected = db.connections[0].readyState;
-
-        console.log('Database connected successfully');
-    } catch (error) {
-        console.error('Database connection failed:', error);
     }
+
+    cached.conn = await cached.promise;
 }
 
 export default dbConnect;

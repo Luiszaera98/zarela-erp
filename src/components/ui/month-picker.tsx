@@ -67,7 +67,7 @@ export function MonthPicker({
                 <Button
                     variant="outline"
                     className={cn(
-                        "w-[180px] justify-start text-left font-normal bg-white dark:bg-card shadow-sm border-input hover:bg-accent hover:text-accent-foreground",
+                        "w-full justify-start text-left font-normal bg-white shadow-sm border-input hover:bg-accent hover:text-accent-foreground dark:bg-card sm:w-[180px]",
                         className
                     )}
                 >
@@ -77,7 +77,7 @@ export function MonthPicker({
                     </span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[280px] p-0" align="start">
+            <DropdownMenuContent className="w-[calc(100vw-2rem)] max-w-[280px] p-0" align="start">
                 <div className="flex items-center justify-between p-3 border-b">
                     <Button
                         variant="ghost"

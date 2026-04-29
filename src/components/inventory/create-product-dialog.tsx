@@ -216,7 +216,7 @@ export function CreateProductDialog({ onProductCreated }: CreateProductDialogPro
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="stock">Stock Inicial *</Label>
                             <Input
@@ -244,7 +244,7 @@ export function CreateProductDialog({ onProductCreated }: CreateProductDialogPro
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         {type === 'Chorizo' ? (
                             <div className="space-y-2">
                                 <Label htmlFor="price">Precio de Venta *</Label>
@@ -294,11 +294,11 @@ export function CreateProductDialog({ onProductCreated }: CreateProductDialogPro
                         </div>
                     </div>
 
-                    <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+                    <DialogFooter className="gap-2 pt-4">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
                             {isPending ? "Guardando..." : "Guardar Producto"}
                         </Button>
                     </DialogFooter>

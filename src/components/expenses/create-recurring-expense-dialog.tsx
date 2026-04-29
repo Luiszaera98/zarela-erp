@@ -114,8 +114,8 @@ export function CreateRecurringExpenseDialog() {
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2 col-span-2">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="description">Descripción</Label>
                             <Input
                                 id="description"
@@ -208,7 +208,7 @@ export function CreateRecurringExpenseDialog() {
                                 />
                             </div>
                         )}
-                        <div className="space-y-2 col-span-2">
+                        <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="supplier">Proveedor (Opcional)</Label>
                             <Input
                                 id="supplier"
@@ -219,11 +219,11 @@ export function CreateRecurringExpenseDialog() {
                             />
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Crear Automatización
                         </Button>

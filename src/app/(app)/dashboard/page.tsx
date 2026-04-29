@@ -76,14 +76,14 @@ export default function DashboardPage() {
     const comparisonData = lastYearDataMTD || lastYearData;
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 bg-background min-h-screen">
+        <div className="mx-auto max-w-7xl space-y-4 bg-background min-h-screen md:space-y-8 md:p-6">
             {/* Header & Filters */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
+            <div className="flex flex-col items-start justify-between gap-3 pb-2 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-foreground">Panel de Control</h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Panel</h2>
                     <p className="text-muted-foreground text-sm mt-1">Visión general del rendimiento financiero.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:items-center">
                     <MonthPicker
                         currentMonth={selectedMonth}
                         currentYear={selectedYear}
@@ -94,7 +94,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Key Metrics Cards */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
 
                 {/* 1. Flujo de Caja (Mes) */}
                 <Card className="border-border shadow-sm bg-card hover:shadow-md transition-all duration-200 ring-1 ring-primary/10">
@@ -192,15 +192,15 @@ export default function DashboardPage() {
             </div>
 
             {/* Evolution Charts */}
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid min-w-0 gap-4 md:grid-cols-2 md:gap-6">
                 {/* Invoiced vs Expenses Chart */}
                 <Card className="border-border shadow-sm bg-card">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-lg font-semibold text-foreground">Facturación vs Gastos</CardTitle>
                         <CardDescription className="text-muted-foreground">Comparativa de facturación y gastos</CardDescription>
                     </CardHeader>
-                    <CardContent className="pl-0 pt-4">
-                        <div className="h-[300px] w-full">
+                    <CardContent className="px-2 pt-4 md:pl-0">
+                        <div className="h-[220px] min-h-[220px] w-full min-w-0 md:h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={evolutionData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -238,8 +238,8 @@ export default function DashboardPage() {
                         <CardTitle className="text-lg font-semibold text-foreground">Cobrado vs Gastos</CardTitle>
                         <CardDescription className="text-muted-foreground">Comparativa de flujo de caja y gastos</CardDescription>
                     </CardHeader>
-                    <CardContent className="pl-0 pt-4">
-                        <div className="h-[300px] w-full">
+                    <CardContent className="px-2 pt-4 md:pl-0">
+                        <div className="h-[220px] min-h-[220px] w-full min-w-0 md:h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={evolutionData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -272,9 +272,9 @@ export default function DashboardPage() {
                 </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid min-w-0 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-7">
                 {/* Top Clients - Billing */}
-                <Card className="col-span-4 lg:col-span-3 border-border shadow-sm bg-card">
+                <Card className="min-w-0 border-border bg-card shadow-sm md:col-span-1 lg:col-span-3">
                     <CardHeader>
                         <CardTitle className="text-lg font-semibold text-foreground">Top Clientes</CardTitle>
                         <CardDescription className="text-muted-foreground">Por facturación este mes</CardDescription>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Top Clients - Payment */}
-                <Card className="col-span-4 lg:col-span-4 border-border shadow-sm bg-card">
+                <Card className="min-w-0 border-border bg-card shadow-sm md:col-span-1 lg:col-span-4">
                     <CardHeader>
                         <CardTitle className="text-lg font-semibold text-foreground">Mejores Pagadores</CardTitle>
                         <CardDescription className="text-muted-foreground">Por pagos recibidos este mes</CardDescription>
@@ -348,15 +348,15 @@ export default function DashboardPage() {
                 </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid min-w-0 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-7">
                 {/* Top Expenses */}
-                <Card className="col-span-4 lg:col-span-3 border-border shadow-sm bg-card">
+                <Card className="min-w-0 border-border bg-card shadow-sm md:col-span-1 lg:col-span-3">
                     <CardHeader>
                         <CardTitle className="text-lg font-semibold text-foreground">Gastos por Categoría</CardTitle>
                         <CardDescription className="text-muted-foreground">Distribución mensual</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-[250px] w-full relative">
+                        <div className="relative h-[220px] min-h-[220px] w-full min-w-0 md:h-[250px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
@@ -389,7 +389,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Stock Summary */}
-                <Card className="col-span-4 lg:col-span-4 border-border shadow-sm bg-card">
+                <Card className="min-w-0 border-border bg-card shadow-sm md:col-span-1 lg:col-span-4">
                     <CardHeader>
                         <CardTitle className="text-lg font-semibold text-foreground">Alertas de Inventario</CardTitle>
                         <CardDescription className="text-muted-foreground">Productos que requieren atención</CardDescription>

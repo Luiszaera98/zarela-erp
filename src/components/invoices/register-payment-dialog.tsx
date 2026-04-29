@@ -108,7 +108,7 @@ export function RegisterPaymentDialog({ invoice, open, onOpenChange, onSuccess }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-lg">
+            <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <DollarSign className="h-5 w-5 text-primary" />
@@ -217,11 +217,11 @@ export function RegisterPaymentDialog({ invoice, open, onOpenChange, onSuccess }
                         />
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                             {isLoading ? "Registrando..." : "Registrar Pago"}
                         </Button>
                     </DialogFooter>

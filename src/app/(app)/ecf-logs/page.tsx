@@ -74,19 +74,19 @@ export default function EcfLogsPage() {
     };
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto p-4 sm:p-6 bg-slate-50/50 min-h-screen rounded-xl">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mx-auto max-w-7xl space-y-4 rounded-xl bg-slate-50/50 min-h-screen md:space-y-8 md:p-6">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-800 flex items-center gap-2">
-                        <ServerCrash className="h-8 w-8 text-indigo-600" />
+                    <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-slate-800 md:text-4xl">
+                        <ServerCrash className="h-7 w-7 text-indigo-600 md:h-8 md:w-8" />
                         Auditoría e-CF
                     </h1>
-                    <p className="text-slate-500 mt-1">Monitorización global de transacciones con los servidores de la DGII.</p>
+                    <p className="mt-1 text-sm text-slate-500 md:text-base">Monitorización global de transacciones con los servidores de la DGII.</p>
                 </div>
             </div>
 
             <Tabs defaultValue="monitor" className="w-full">
-                <TabsList className="grid w-full md:w-1/2 lg:w-1/3 grid-cols-2 mb-6">
+                <TabsList className="mb-4 grid h-auto w-full grid-cols-2 md:mb-6 md:w-1/2 lg:w-1/3">
                     <TabsTrigger value="monitor" className="gap-2">
                         <Activity className="h-4 w-4" />
                         Monitor de Transacciones
@@ -98,9 +98,9 @@ export default function EcfLogsPage() {
                 </TabsList>
 
                 <TabsContent value="monitor" className="space-y-4">
-                    <Card className="border-slate-100 shadow-sm bg-white">
+                    <Card className="border-slate-100 bg-white shadow-sm">
                 <CardHeader className="pb-4">
-                    <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
+                    <div className="flex flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
                         <div className="relative w-full md:max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input

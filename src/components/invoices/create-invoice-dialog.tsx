@@ -323,7 +323,7 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-5xl">
                 <DialogHeader>
                     <DialogTitle>Nueva Factura (DGII - República Dominicana)</DialogTitle>
                     <DialogDescription>
@@ -434,14 +434,14 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
 
                     {/* Items */}
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <Label>Productos/Servicios</Label>
-                            <div className="flex gap-2">
-                                <Button type="button" onClick={addItem} size="sm" variant="outline">
+                            <div className="grid grid-cols-2 gap-2 sm:flex">
+                                <Button type="button" onClick={addItem} size="sm" variant="outline" className="w-full sm:w-auto">
                                     <PlusCircle className="h-4 w-4 mr-2" />
                                     Producto
                                 </Button>
-                                <Button type="button" onClick={addService} size="sm" variant="outline">
+                                <Button type="button" onClick={addService} size="sm" variant="outline" className="w-full sm:w-auto">
                                     <PlusCircle className="h-4 w-4 mr-2" />
                                     Servicio
                                 </Button>
@@ -450,8 +450,8 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
 
                         <div className="space-y-3">
                             {items.map((item, index) => (
-                                <div key={index} className="grid grid-cols-12 gap-3 items-end p-3 border rounded-md bg-muted/20">
-                                    <div className="col-span-12 md:col-span-5 space-y-2">
+                                <div key={index} className="grid grid-cols-1 gap-3 rounded-md border bg-muted/20 p-3 sm:grid-cols-12 sm:items-end">
+                                    <div className="space-y-2 sm:col-span-12 md:col-span-5">
                                         {item.itemType === 'service' ? (
                                             <>
                                                 <Label className="text-xs">Servicio</Label>
@@ -507,7 +507,7 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                                         )}
                                     </div>
 
-                                    <div className="col-span-6 md:col-span-2">
+                                    <div className="sm:col-span-6 md:col-span-2">
                                         <Label htmlFor={`quantity-${index}`} className="text-xs">Cantidad</Label>
                                         <Input
                                             id={`quantity-${index}`}
@@ -522,7 +522,7 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                                         />
                                     </div>
 
-                                    <div className="col-span-6 md:col-span-2">
+                                    <div className="sm:col-span-6 md:col-span-2">
                                         <Label htmlFor={`price-${index}`} className="text-xs">Precio Unit.</Label>
                                         <Input
                                             id={`price-${index}`}
@@ -536,7 +536,7 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                                         />
                                     </div>
 
-                                    <div className="col-span-5 md:col-span-1">
+                                    <div className="sm:col-span-5 md:col-span-1">
                                         <Label htmlFor={`discount-${index}`} className="text-xs">Desc. %</Label>
                                         <Input
                                             id={`discount-${index}`}
@@ -550,14 +550,14 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                                         />
                                     </div>
 
-                                    <div className="col-span-5 md:col-span-1">
+                                    <div className="sm:col-span-5 md:col-span-1">
                                         <Label className="text-xs">Total</Label>
                                         <div className="mt-1 h-10 flex items-center font-semibold">
                                             ${calculateItemTotal(item).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                                         </div>
                                     </div>
 
-                                    <div className="col-span-2 md:col-span-1">
+                                    <div className="sm:col-span-2 md:col-span-1">
                                         <Button
                                             type="button"
                                             variant="ghost"
@@ -607,25 +607,25 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                                     <span>${calculateSubtotal().toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
                                 </div>
 
-                                <div className="flex justify-between items-center text-sm gap-2">
+                                <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                                     <span>ITBIS:</span>
-                                    <div className="flex items-center gap-2">
+                                    <div className="grid grid-cols-[72px_auto_1fr] items-center gap-2 sm:flex">
                                         <Input
                                             type="number"
                                             min="0"
                                             max="100"
                                             value={taxRate}
                                             onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
-                                            className="w-16 h-8 text-sm"
+                                            className="h-8 w-full text-sm sm:w-16"
                                         />
                                         <span className="text-xs">%</span>
-                                        <span className="font-medium w-24 text-right">
+                                        <span className="font-medium text-right sm:w-24">
                                             ${calculateTax().toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-between text-xl font-bold border-t pt-3">
+                                <div className="flex flex-col gap-1 border-t pt-3 text-xl font-bold sm:flex-row sm:justify-between">
                                     <span>Total a Pagar:</span>
                                     <span className="text-primary">${calculateTotal().toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
                                 </div>
@@ -645,11 +645,11 @@ export function CreateInvoiceDialog({ open, onOpenChange, onSuccess }: CreateInv
                         />
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                             {isLoading ? "Creando..." : "Crear Factura con NCF"}
                         </Button>
                     </DialogFooter>

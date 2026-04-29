@@ -91,7 +91,7 @@ export function EditClientDialog({ client, open, onOpenChange, onClientUpdated }
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="edit-name">Nombre / Razón Social *</Label>
                             <Input
@@ -128,7 +128,7 @@ export function EditClientDialog({ client, open, onOpenChange, onClientUpdated }
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="edit-email">Correo Electrónico</Label>
                             <Input
@@ -160,11 +160,11 @@ export function EditClientDialog({ client, open, onOpenChange, onClientUpdated }
                         />
                     </div>
 
-                    <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+                    <DialogFooter className="gap-2 pt-4">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
                             {isPending ? "Guardando..." : "Guardar Cambios"}
                         </Button>
                     </DialogFooter>

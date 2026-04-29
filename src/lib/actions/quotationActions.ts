@@ -198,8 +198,15 @@ export async function deleteQuotationAction(id: string): Promise<{ success: bool
 
     await dbConnect();
     try {
-        const result = await QuotationModel.findByIdAndDelete(id);
-        if (!result) return { success: false, message: "Cotización no encontrada" };
+        const quotation = await QuotationModel.findById(id);
+        if (!quotation) return { success: false, message: "Cotización no encontrada" };
+
+        const status = quotation.status as string;
+        if (status === 'Enviada' || status === 'Facturada' || status === 'Convertida') {
+            return { success: false, message: "No se puede eliminar una cotización enviada o facturada." };
+        }
+
+        await QuotationModel.findByIdAndDelete(id);
 
         revalidatePath('/quotations');
         return { success: true, message: "Cotización eliminada correctamente" };

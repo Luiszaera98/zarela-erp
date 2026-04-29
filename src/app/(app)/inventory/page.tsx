@@ -96,25 +96,25 @@ export default function InventoryPage() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-4 md:space-y-8">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Inventario</h1>
-                    <p className="text-muted-foreground mt-1">Gestione sus productos y monitoree el stock.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Inventario</h1>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">Gestione sus productos y monitoree el stock.</p>
                 </div>
                 <CreateProductDialog onProductCreated={fetchProducts} />
             </div>
 
             <Tabs defaultValue="list" className="w-full">
-                <TabsList>
+                <TabsList className="grid h-auto w-full grid-cols-2 sm:inline-flex sm:w-auto">
                     <TabsTrigger value="list">Inventario Actual</TabsTrigger>
                     <TabsTrigger value="history">Historial de Movimientos</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="list" className="mt-6">
-                    <Card className="border-none shadow-md bg-card/50 backdrop-blur-sm">
-                        <CardHeader className="pb-4">
-                            <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
+                <TabsContent value="list" className="mt-4 md:mt-6">
+                    <Card className="border shadow-sm bg-card md:border-none md:bg-card/50 md:shadow-md md:backdrop-blur-sm">
+                        <CardHeader className="p-4 pb-3 md:p-6 md:pb-4">
+                            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between md:gap-4">
                                 <div className="relative w-full sm:max-w-md">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -137,7 +137,7 @@ export default function InventoryPage() {
                                 </Select>
                             </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                             <div className="rounded-md border overflow-hidden">
                                 <Table>
                                     <TableHeader className="bg-muted/50">
@@ -236,11 +236,11 @@ export default function InventoryPage() {
                             </div>
 
                             {/* Pagination Controls */}
-                            <div className="flex items-center justify-end space-x-2 py-4">
+                            <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-end sm:space-x-2">
                                 <div className="flex-1 text-sm text-muted-foreground">
                                     Página {page} de {totalPages}
                                 </div>
-                                <div className="space-x-2">
+                                <div className="grid grid-cols-2 gap-2 sm:block sm:space-x-2">
                                     <Button
                                         variant="outline"
                                         size="sm"

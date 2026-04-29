@@ -462,6 +462,76 @@ export async function sendECF(
   }
 }
 
+export async function sendBulkECF(invoiceIds: string[]): Promise<{
+  success: boolean;
+  sent: number;
+  failed: number;
+  skipped: number;
+  message: string;
+  results: Array<{ id: string; success: boolean; message: string; encf?: string; trackId?: string }>;
+}> {
+  try {
+    await requireRole(['Administrador', 'Ventas']);
+  } catch (error) {
+    return { success: false, sent: 0, failed: 0, skipped: 0, message: getAuthErrorMessage(error), results: [] };
+  }
+
+  const uniqueIds = Array.from(new Set(invoiceIds.filter(Boolean)));
+  if (uniqueIds.length === 0) {
+    return { success: false, sent: 0, failed: 0, skipped: 0, message: 'Seleccione al menos una factura electrónica para enviar.', results: [] };
+  }
+
+  await dbConnect();
+  const invoices = await InvoiceModel.find({ _id: { $in: uniqueIds } })
+    .select('number ncfType ecfTrackId ecfSignedXml ecfStatus')
+    .lean();
+  const invoiceMap = new Map(invoices.map((invoice: any) => [invoice._id.toString(), invoice]));
+  const results: Array<{ id: string; success: boolean; message: string; encf?: string; trackId?: string }> = [];
+  let sent = 0;
+  let failed = 0;
+  let skipped = 0;
+
+  for (const id of uniqueIds) {
+    const invoice = invoiceMap.get(id) as any;
+    if (!invoice) {
+      failed += 1;
+      results.push({ id, success: false, message: 'Factura no encontrada.' });
+      continue;
+    }
+
+    if (!invoice.ncfType?.startsWith('E')) {
+      skipped += 1;
+      results.push({ id, success: false, message: `${invoice.number}: no es una factura e-CF.` });
+      continue;
+    }
+
+    if (invoice.ecfTrackId || invoice.ecfSignedXml) {
+      skipped += 1;
+      results.push({ id, success: false, message: `${invoice.number}: ya fue enviada a la DGII.` });
+      continue;
+    }
+
+    const result = await sendECF(id);
+    if (result.success) {
+      sent += 1;
+      results.push({ id, success: true, message: `${invoice.number}: enviada correctamente.`, encf: result.encf, trackId: result.trackId });
+    } else {
+      failed += 1;
+      results.push({ id, success: false, message: `${invoice.number}: ${result.message || 'no se pudo enviar.'}` });
+    }
+  }
+
+  revalidatePath('/invoices');
+  return {
+    success: sent > 0 && failed === 0,
+    sent,
+    failed,
+    skipped,
+    message: `Envío masivo finalizado. Enviadas: ${sent}. Omitidas: ${skipped}. Fallidas: ${failed}.`,
+    results
+  };
+}
+
 // ─── Consultar estado del e-CF en la DGII ─────────────────────────────────────
 
 export async function checkECFStatus(invoiceId: string): Promise<{

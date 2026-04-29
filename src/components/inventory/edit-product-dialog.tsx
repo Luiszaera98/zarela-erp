@@ -102,7 +102,7 @@ export function EditProductDialog({ product, open, onOpenChange, onSuccess }: Ed
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
                     <DialogTitle>Editar Producto</DialogTitle>
                     <DialogDescription>
@@ -239,11 +239,11 @@ export function EditProductDialog({ product, open, onOpenChange, onSuccess }: Ed
                         </div>
                     </div>
 
-                    <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+                    <DialogFooter className="gap-2 pt-4">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
                             {isPending ? "Guardando..." : "Guardar Cambios"}
                         </Button>
                     </DialogFooter>

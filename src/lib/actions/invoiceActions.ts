@@ -26,6 +26,10 @@ function isServiceItem(item: { itemType?: string; productId?: string }) {
     return item.itemType === 'service' || item.productId?.startsWith('SERVICE-');
 }
 
+function hasDgiiSubmission(doc: { ecfTrackId?: string; ecfSignedXml?: string }) {
+    return Boolean(doc.ecfTrackId || doc.ecfSignedXml);
+}
+
 // Helper to convert MongoDB document to Invoice type
 function mapInvoice(doc: any): Invoice {
     return {
@@ -367,6 +371,10 @@ export async function updateInvoice(id: string, data: {
             throw new Error("Factura no encontrada");
         }
 
+        if (hasDgiiSubmission(existingInvoice)) {
+            throw new Error("Esta factura ya fue enviada a la DGII y no puede editarse.");
+        }
+
         // 1. Revert Old Stock (PHYSICAL ONLY, NO LOG)
         // We do NOT pass metadata here, so no 'ENTRADA' log is created.
         const oldItems: StockItem[] = existingInvoice.items.filter((i: any) => !isServiceItem(i)).map((i: any) => ({
@@ -484,6 +492,10 @@ export async function deleteInvoiceAction(id: string): Promise<{ success: boolea
         const invoice = await InvoiceModel.findById(id).session(session || null);
         if (!invoice) {
             throw new Error("Factura no encontrada");
+        }
+
+        if (hasDgiiSubmission(invoice)) {
+            throw new Error("Esta factura ya fue enviada a la DGII y no puede eliminarse.");
         }
 
         // 1. Restore Stock (PHYSICAL ONLY, NO LOG)

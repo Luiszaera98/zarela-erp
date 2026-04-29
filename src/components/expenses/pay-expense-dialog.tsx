@@ -265,11 +265,11 @@ export function PayExpenseDialog({ expense, open, onOpenChange, onSuccess }: Pay
                         </div>
                     </div>
 
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                    <DialogFooter className="gap-2">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isLoading || isUploading}>
+                        <Button type="submit" disabled={isLoading || isUploading} className="w-full sm:w-auto">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Registrar Pago
                         </Button>

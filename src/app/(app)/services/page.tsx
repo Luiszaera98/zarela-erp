@@ -157,21 +157,21 @@ export default function ServicesPage() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-4 md:space-y-8">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight">Servicios</h1>
-                    <p className="text-muted-foreground mt-1">Gestione servicios vendibles sin afectar inventario.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Servicios</h1>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-base">Gestione servicios vendibles sin afectar inventario.</p>
                 </div>
-                <Button className="gap-2" onClick={openCreateDialog}>
+                <Button className="w-full gap-2 sm:w-auto" onClick={openCreateDialog}>
                     <PlusCircle className="h-5 w-5" />
                     Nuevo Servicio
                 </Button>
             </div>
 
-            <Card className="border-none shadow-md bg-card/50 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                    <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
+            <Card className="border shadow-sm bg-card md:border-none md:bg-card/50 md:shadow-md md:backdrop-blur-sm">
+                <CardHeader className="p-4 pb-3 md:p-6 md:pb-4">
+                    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between md:gap-4">
                         <div className="relative w-full sm:max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
@@ -199,7 +199,7 @@ export default function ServicesPage() {
                         </Select>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                     <div className="rounded-md border overflow-hidden">
                         <Table>
                             <TableHeader className="bg-muted/50">
@@ -276,16 +276,18 @@ export default function ServicesPage() {
                             </TableBody>
                         </Table>
                     </div>
-                    <div className="flex items-center justify-end gap-2 py-4">
+                    <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-end">
                         <div className="flex-1 text-sm text-muted-foreground">
                             Página {page} de {totalPages}
                         </div>
-                        <Button variant="outline" size="sm" onClick={() => setPage(prev => Math.max(1, prev - 1))} disabled={page === 1 || isLoading}>
-                            Anterior
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => setPage(prev => Math.min(totalPages, prev + 1))} disabled={page === totalPages || isLoading}>
-                            Siguiente
-                        </Button>
+                        <div className="grid grid-cols-2 gap-2 sm:flex">
+                            <Button variant="outline" size="sm" onClick={() => setPage(prev => Math.max(1, prev - 1))} disabled={page === 1 || isLoading}>
+                                Anterior
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setPage(prev => Math.min(totalPages, prev + 1))} disabled={page === totalPages || isLoading}>
+                                Siguiente
+                            </Button>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -349,9 +351,9 @@ export default function ServicesPage() {
                                 <Textarea id="service-description" value={form.description} onChange={(event) => updateForm('description', event.target.value)} rows={3} placeholder="Detalle que aparecerá en documentos comerciales" />
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving}>Cancelar</Button>
-                            <Button type="submit" disabled={isSaving}>{isSaving ? 'Guardando...' : 'Guardar Servicio'}</Button>
+                        <DialogFooter className="gap-2">
+                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving} className="w-full sm:w-auto">Cancelar</Button>
+                            <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">{isSaving ? 'Guardando...' : 'Guardar Servicio'}</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

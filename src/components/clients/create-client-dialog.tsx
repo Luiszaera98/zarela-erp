@@ -82,7 +82,7 @@ export function CreateClientDialog({ onClientCreated }: CreateClientDialogProps)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button className="w-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:bg-primary/90 hover:shadow-xl sm:w-auto">
                     <PlusCircle className="mr-2 h-5 w-5" /> Nuevo Contacto
                 </Button>
             </DialogTrigger>
@@ -94,7 +94,7 @@ export function CreateClientDialog({ onClientCreated }: CreateClientDialogProps)
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="name">Nombre / Razón Social *</Label>
                             <Input
@@ -131,7 +131,7 @@ export function CreateClientDialog({ onClientCreated }: CreateClientDialogProps)
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                             <Label htmlFor="email">Correo Electrónico</Label>
                             <Input
@@ -163,11 +163,11 @@ export function CreateClientDialog({ onClientCreated }: CreateClientDialogProps)
                         />
                     </div>
 
-                    <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+                    <DialogFooter className="gap-2 pt-4">
+                        <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isPending} className="w-full sm:w-auto">
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
                             {isPending ? "Guardando..." : "Guardar Contacto"}
                         </Button>
                     </DialogFooter>
