@@ -127,7 +127,51 @@ export function InventoryHistory() {
                 </Card>
             </div>
 
-            <div className="rounded-md border bg-card">
+            <div className="space-y-3 md:hidden">
+                {loading ? (
+                    <div className="rounded-md border bg-card p-8 text-center">
+                        <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                ) : movements.length === 0 ? (
+                    <div className="rounded-md border bg-card p-8 text-center text-muted-foreground">
+                        No hay movimientos registrados en este período.
+                    </div>
+                ) : (
+                    movements.map((movement) => (
+                        <div key={movement.id} className="rounded-md border bg-card p-4 shadow-sm">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="truncate font-semibold">{movement.productName}</p>
+                                    <p className="mt-1 text-sm text-muted-foreground">
+                                        {format(new Date(movement.date), "d 'de' MMM, yyyy", { locale: es })}
+                                    </p>
+                                </div>
+                                <Badge variant={getBadgeVariant(movement.type) as any} className="flex w-fit shrink-0 items-center gap-1">
+                                    {getIcon(movement.type)}
+                                    {movement.type}
+                                </Badge>
+                            </div>
+                            <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-3 text-sm">
+                                <div>
+                                    <p className="text-xs font-medium uppercase text-muted-foreground">Cantidad</p>
+                                    <p className={movement.type === 'SALIDA' ? 'font-bold text-red-600' : 'font-bold text-green-600'}>
+                                        {movement.type === 'SALIDA' ? '-' : '+'}{movement.quantity}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-medium uppercase text-muted-foreground">Referencia</p>
+                                    <p className="truncate">{movement.reference || '-'}</p>
+                                </div>
+                            </div>
+                            {movement.notes && (
+                                <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">{movement.notes}</p>
+                            )}
+                        </div>
+                    ))
+                )}
+            </div>
+
+            <div className="hidden rounded-md border bg-card md:block">
                 <Table>
                     <TableHeader>
                         <TableRow>

@@ -151,6 +151,39 @@ export default function ExpensesPage() {
         }
     };
 
+    const renderExpenseActions = (expense: Expense) => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setEditExpense(expense)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => setPayExpense(expense)}
+                    disabled={expense.status === 'Pagada'}
+                >
+                    <DollarSign className="h-4 w-4 mr-2" />
+                    Registrar Pago
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    onClick={() => setDeleteExpense(expense)}
+                    className="text-destructive focus:text-destructive"
+                >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+
     return (
         <div className="space-y-4 md:space-y-8">
             {/* Header with Title and Add Button */}
@@ -253,7 +286,79 @@ export default function ExpensesPage() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="rounded-md border overflow-hidden">
+                            <div className="space-y-3 md:hidden">
+                                {isLoading ? (
+                                    <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                        Cargando gastos...
+                                    </div>
+                                ) : expenses.length > 0 ? (
+                                    expenses.map((expense) => {
+                                        const pendingAmount = expense.amount - (expense.paidAmount || 0);
+                                        const fiscalNumber = expense.encf || expense.ncf || (expense.ncfType?.startsWith('E') ? 'POR ASIGNAR' : 'N/A');
+
+                                        return (
+                                            <div key={expense.id} className="rounded-md border bg-background p-4 shadow-sm">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <div className="flex flex-wrap items-center gap-2">
+                                                            <p className="truncate font-semibold">{expense.description}</p>
+                                                            {getStatusBadge(expense.status)}
+                                                        </div>
+                                                        <p className="mt-1 text-sm text-muted-foreground">{expense.supplierName || 'Sin proveedor'}</p>
+                                                    </div>
+                                                    <div className="shrink-0">{renderExpenseActions(expense)}</div>
+                                                </div>
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    <Badge variant="outline">{expense.category}</Badge>
+                                                    {expense.invoiceNumber && <Badge variant="secondary">Factura #{expense.invoiceNumber}</Badge>}
+                                                </div>
+                                                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                                    <div>
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Fecha</p>
+                                                        <p>{format(new Date(expense.date), 'dd MMM yyyy', { locale: es })}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">E-CF / NCF</p>
+                                                        <p className="font-mono text-xs">{fiscalNumber}</p>
+                                                    </div>
+                                                </div>
+                                                {expense.ncfType?.startsWith('E') && (
+                                                    <div className="mt-3">
+                                                        <EcfActionButtons
+                                                            invoiceId={expense.id}
+                                                            ncfType={expense.ncfType}
+                                                            ecfStatus={(expense as any).ecfStatus}
+                                                            ecfTrackId={(expense as any).ecfTrackId}
+                                                            encf={(expense as any).encf}
+                                                            documentType="Expense"
+                                                            onStatusChange={fetchExpenses}
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-3">
+                                                    <div>
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Monto</p>
+                                                        <p className="text-lg font-bold">${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Pendiente</p>
+                                                        <p className={`text-lg font-bold ${pendingAmount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                                                            ${pendingAmount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                        <Receipt className="mx-auto mb-2 h-10 w-10 opacity-20" />
+                                        <p>No se encontraron gastos.</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="hidden rounded-md border overflow-hidden md:block">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -323,36 +428,7 @@ export default function ExpensesPage() {
                                                             {getStatusBadge(expense.status)}
                                                         </TableCell>
                                                         <TableCell className="text-right">
-                                                            <DropdownMenu>
-                                                                <DropdownMenuTrigger asChild>
-                                                                    <Button variant="ghost" size="sm">
-                                                                        <MoreHorizontal className="h-4 w-4" />
-                                                                    </Button>
-                                                                </DropdownMenuTrigger>
-                                                                <DropdownMenuContent align="end">
-                                                                    <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuItem onClick={() => setEditExpense(expense)}>
-                                                                        <Edit className="h-4 w-4 mr-2" />
-                                                                        Editar
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuItem
-                                                                        onClick={() => setPayExpense(expense)}
-                                                                        disabled={expense.status === 'Pagada'}
-                                                                    >
-                                                                        <DollarSign className="h-4 w-4 mr-2" />
-                                                                        Registrar Pago
-                                                                    </DropdownMenuItem>
-                                                                    <DropdownMenuSeparator />
-                                                                    <DropdownMenuItem
-                                                                        onClick={() => setDeleteExpense(expense)}
-                                                                        className="text-destructive focus:text-destructive"
-                                                                    >
-                                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                                        Eliminar
-                                                                    </DropdownMenuItem>
-                                                                </DropdownMenuContent>
-                                                            </DropdownMenu>
+                                                            {renderExpenseActions(expense)}
                                                         </TableCell>
                                                     </TableRow>
                                                 );

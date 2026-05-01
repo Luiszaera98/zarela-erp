@@ -31,7 +31,7 @@ export default async function SettingsPage() {
             </div>
 
             <Tabs defaultValue="inventory" className="w-full">
-                <div className="pb-2">
+                <div className="overflow-x-auto pb-2">
                     <TabsList className={`mb-4 grid h-auto w-full gap-1 md:mb-8 ${isGerente ? 'grid-cols-2 md:max-w-md' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'}`}>
                         <TabsTrigger value="inventory" className="min-w-24">Inventario</TabsTrigger>
                         <TabsTrigger value="expenses" className="min-w-24">Gastos</TabsTrigger>

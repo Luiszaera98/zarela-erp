@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { navSections } from "@/components/navigation/app-sidebar";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { BrandLogo } from "@/components/brand-logo";
 import { logoutAction } from "@/lib/actions/authActions";
 
@@ -95,6 +95,9 @@ export function MobileBottomNav({ currentUserRole }: MobileBottomNavProps) {
                                     <span className="block text-xs font-medium uppercase text-muted-foreground">Menú</span>
                                 </span>
                             </SheetTitle>
+                            <SheetDescription className="sr-only">
+                                Navegación principal de Zarela ERP para teléfonos.
+                            </SheetDescription>
                         </SheetHeader>
                         <div className="mt-5 space-y-5">
                             {navSections.map(section => {
@@ -109,17 +112,18 @@ export function MobileBottomNav({ currentUserRole }: MobileBottomNavProps) {
                                                 const Icon = item.icon || User;
                                                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                                                 return (
-                                                    <Link
-                                                        key={item.href}
-                                                        href={item.href}
-                                                        className={cn(
-                                                            "flex min-h-14 items-center gap-3 rounded-md border px-3 text-sm font-medium",
-                                                            active ? "border-primary bg-primary text-primary-foreground" : "bg-background"
-                                                        )}
-                                                    >
-                                                        <Icon className="h-5 w-5 shrink-0" />
-                                                        <span className="truncate">{item.label}</span>
-                                                    </Link>
+                                                    <SheetClose asChild key={item.href}>
+                                                        <Link
+                                                            href={item.href}
+                                                            className={cn(
+                                                                "flex min-h-14 items-center gap-3 rounded-md border px-3 text-sm font-medium",
+                                                                active ? "border-primary bg-primary text-primary-foreground" : "bg-background"
+                                                            )}
+                                                        >
+                                                            <Icon className="h-5 w-5 shrink-0" />
+                                                            <span className="truncate">{item.label}</span>
+                                                        </Link>
+                                                    </SheetClose>
                                                 );
                                             })}
                                         </div>

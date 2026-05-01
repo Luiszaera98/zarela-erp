@@ -372,6 +372,156 @@ export default function InvoicesPage() {
         }
     };
 
+    const renderFiscalDocumentActions = (doc: FiscalDocument) => {
+        const isInvoice = doc.documentType === 'invoice';
+        const isCreditNote = doc.documentType === 'creditNote';
+        const isDebitNote = doc.documentType === 'debitNote';
+        const invoice = isInvoice ? (doc as Invoice) : null;
+        const lockedByDgii = isDgiiLocked(doc);
+
+        if (isInvoice && invoice) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setViewInvoice(invoice)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver Detalles
+                        </DropdownMenuItem>
+                        {!lockedByDgii && (
+                            <DropdownMenuItem onClick={() => setEditInvoice(invoice)}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Editar
+                            </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem onClick={() => shareInvoice(invoice, 'whatsapp')}>
+                            <WhatsAppIcon className="h-4 w-4 mr-2 text-green-600" />
+                            Enviar PDF por WhatsApp
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => shareInvoice(invoice, 'email')}>
+                            <EmailIcon className="h-4 w-4 mr-2 text-blue-600" />
+                            Enviar PDF por Correo
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onClick={() => setPaymentInvoice(invoice)}
+                            disabled={invoice.status === 'Pagada' || invoice.status === 'Anulada'}
+                        >
+                            <DollarSign className="h-4 w-4 mr-2" />
+                            Registrar Pago
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => setCreditNoteInvoice(invoice)}
+                            disabled={invoice.status === 'Anulada'}
+                        >
+                            <FileX className="h-4 w-4 mr-2" />
+                            Crear Nota de Crédito
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => setDebitNoteInvoice(invoice)}
+                            disabled={invoice.status === 'Anulada'}
+                        >
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            Crear Nota de Débito
+                        </DropdownMenuItem>
+                        {!lockedByDgii && (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => setDeleteInvoice(doc)}
+                                    className="text-destructive focus:text-destructive"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar
+                                </DropdownMenuItem>
+                            </>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
+        if (isCreditNote) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones NC</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setViewCreditNote(doc as CreditNote)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver Detalles
+                        </DropdownMenuItem>
+                        {!lockedByDgii && (
+                            <>
+                                <DropdownMenuItem onClick={() => setEditCreditNote(doc as CreditNote)}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Editar
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => setCreditNoteToDelete(doc as CreditNote)}
+                                    className="text-destructive focus:text-destructive"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar
+                                </DropdownMenuItem>
+                            </>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
+        if (isDebitNote) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Acciones ND</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => setViewDebitNote(doc)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver Detalles
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => window.open(`/invoices/${doc.id}/print`, '_blank')}>
+                            <FileText className="h-4 w-4 mr-2" />
+                            Imprimir
+                        </DropdownMenuItem>
+                        {!lockedByDgii && (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => setDeleteInvoice(doc)}
+                                    className="text-destructive focus:text-destructive"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar
+                                </DropdownMenuItem>
+                            </>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
+        return <span className="text-muted-foreground text-sm">-</span>;
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-[50vh]">
@@ -499,7 +649,104 @@ export default function InvoicesPage() {
                     </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                    <div className="rounded-md border overflow-hidden">
+                    <div className="space-y-3 md:hidden">
+                        {paginatedDocuments.length > 0 ? (
+                            paginatedDocuments.map((doc) => {
+                                const isCreditNote = doc.documentType === 'creditNote';
+                                const isDebitNote = doc.documentType === 'debitNote';
+                                const isSelected = selectedInvoices.includes(doc.id);
+
+                                return (
+                                    <div key={`${doc.documentType}-mobile-${doc.id}`} className="rounded-md border bg-background p-4 shadow-sm">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="min-w-0">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    {isSelectionMode && (
+                                                        <input
+                                                            type="checkbox"
+                                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                            checked={isSelected}
+                                                            onChange={(e) => handleSelectInvoice(doc.id, e.target.checked)}
+                                                        />
+                                                    )}
+                                                    <p className="font-semibold">{doc.number}</p>
+                                                    {isCreditNote && (
+                                                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400">
+                                                            Nota Crédito
+                                                        </Badge>
+                                                    )}
+                                                    {isDebitNote && (
+                                                        <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/30 dark:text-indigo-400">
+                                                            Nota Débito
+                                                        </Badge>
+                                                    )}
+                                                    {isCreditNote || isDebitNote ? (
+                                                        <Badge variant="outline" className="bg-gray-100 dark:bg-gray-800">Aplicada</Badge>
+                                                    ) : (
+                                                        getStatusBadge(doc.status as InvoiceStatus)
+                                                    )}
+                                                </div>
+                                                <p className="mt-1 truncate text-sm text-muted-foreground">{doc.clientName}</p>
+                                            </div>
+                                            <div className="shrink-0">{renderFiscalDocumentActions(doc)}</div>
+                                        </div>
+
+                                        <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                            <div>
+                                                <p className="text-xs font-medium uppercase text-muted-foreground">Emisión</p>
+                                                <p>{format(new Date(doc.date), 'dd MMM yyyy', { locale: es })}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-medium uppercase text-muted-foreground">Vence</p>
+                                                <p>{format(new Date(doc.dueDate), 'dd MMM yyyy', { locale: es })}</p>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <p className="text-xs font-medium uppercase text-muted-foreground">E-CF / NCF</p>
+                                                <p className="font-mono text-xs">{doc.ncf || 'N/A'} {doc.ncfType ? `(${doc.ncfType})` : ''}</p>
+                                            </div>
+                                            {(isCreditNote || isDebitNote) && (
+                                                <div className="col-span-2">
+                                                    <p className="text-xs font-medium uppercase text-muted-foreground">Factura origen</p>
+                                                    <p className="font-medium">{(doc as any).originalInvoiceNumber || 'N/A'}</p>
+                                                    {(doc as any).originalInvoiceNcf && (
+                                                        <p className="font-mono text-xs text-muted-foreground">{(doc as any).originalInvoiceNcf}</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {doc.ncfType?.startsWith('E') && (
+                                            <div className="mt-3">
+                                                <EcfActionButtons
+                                                    invoiceId={doc.id}
+                                                    ncfType={doc.ncfType}
+                                                    ecfStatus={(doc as any).ecfStatus}
+                                                    ecfTrackId={(doc as any).ecfTrackId}
+                                                    encf={(doc as any).encf}
+                                                    documentType={doc.documentType === 'creditNote' ? 'CreditNote' : doc.documentType === 'debitNote' ? 'DebitNote' : 'Invoice'}
+                                                    onStatusChange={fetchInvoices}
+                                                />
+                                            </div>
+                                        )}
+
+                                        <div className="mt-4 flex items-center justify-between border-t pt-3">
+                                            <span className="text-sm text-muted-foreground">Total</span>
+                                            <span className={`text-lg font-bold ${isCreditNote ? 'text-red-600 dark:text-red-400' : ''}`}>
+                                                {isCreditNote && '-'}${doc.total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                <FileText className="mx-auto mb-2 h-10 w-10 opacity-20" />
+                                <p>No se encontraron facturas.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="hidden rounded-md border overflow-hidden md:block">
                         <Table>
                             <TableHeader className="bg-muted/50">
                                 <TableRow>

@@ -235,6 +235,87 @@ export default function TransactionsHistoryPage() {
         );
     };
 
+    const getTransactionView = (t: Transaction) => {
+        const isEditable = t.type === 'payment' || t.type === 'expense_payment';
+        const hasAttachments = t.type === 'expense_payment' && t.attachments && t.attachments.length > 0;
+
+        if (t.type === 'payment') {
+            return {
+                date: t.paymentDate,
+                amount: t.amount,
+                badge: <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">Ingreso</Badge>,
+                description: <span className="text-slate-700">Factura {t.invoiceNumber} <span className="text-slate-500">{t.reference ? `(${t.reference})` : ''}</span></span>,
+                category: getPaymentMethodBadge(t.paymentMethod),
+                isEditable,
+                hasAttachments,
+            };
+        }
+
+        if (t.type === 'expense_payment') {
+            return {
+                date: t.date,
+                amount: t.amount,
+                badge: <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">Gasto</Badge>,
+                description: (
+                    <div className="flex items-center gap-2">
+                        <span className="text-slate-700">{t.expenseDescription} <span className="text-slate-500">{t.expenseSupplier ? ` - ${t.expenseSupplier}` : ''}</span></span>
+                        {hasAttachments && <Paperclip className="h-3 w-3 text-blue-500" />}
+                    </div>
+                ),
+                category: <Badge variant="secondary" className="bg-slate-100 text-slate-600 hover:bg-slate-200">{t.expenseCategory}</Badge>,
+                isEditable,
+                hasAttachments,
+            };
+        }
+
+        return {
+            date: t.date,
+            amount: t.total,
+            badge: <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Nota Crédito</Badge>,
+            description: <span className="text-slate-700">NCF: {t.ncf} <span className="text-slate-500">(Ref: {t.originalInvoiceNumber})</span></span>,
+            category: <span className="text-sm text-slate-500">{t.reason}</span>,
+            isEditable,
+            hasAttachments,
+        };
+    };
+
+    const renderTransactionActions = (t: Transaction, isEditable: boolean, hasAttachments?: boolean) => {
+        const transactionAmount = t.type === 'payment' || t.type === 'expense_payment' ? t.amount : 0;
+
+        return isEditable ? (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                        <span className="sr-only">Abrir menú</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    {hasAttachments && t.type === 'expense_payment' && (
+                        <DropdownMenuItem onClick={() => setPreviewUrl(t.attachments?.[0] || null)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>Ver Comprobante</span>
+                        </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={() => {
+                        if (t.type === 'payment') handleEditPayment(t as Payment);
+                        else if (t.type === 'expense_payment') handleEditExpensePayment(t);
+                    }}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        <span>Editar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => confirmDelete(t.id, t.type as 'payment' | 'expense_payment', transactionAmount)}
+                        className="text-red-600 focus:text-red-600"
+                    >
+                        <Trash className="mr-2 h-4 w-4" />
+                        <span>Eliminar</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        ) : null;
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-[50vh]">
@@ -354,7 +435,47 @@ export default function TransactionsHistoryPage() {
                 </CardHeader>
 
                 <CardContent className="p-0">
-                    <div className="rounded-none border-0">
+                    <div className="space-y-3 p-4 md:hidden">
+                        {paginatedTransactions.length > 0 ? (
+                            paginatedTransactions.map((t) => {
+                                const { date, amount, badge, description, category, isEditable, hasAttachments } = getTransactionView(t);
+                                const isIncome = t.type === 'payment';
+
+                                return (
+                                    <div key={`${t.type}-${t.id}`} className="rounded-md border bg-white p-4 shadow-sm">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="min-w-0">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    {badge}
+                                                    {category}
+                                                </div>
+                                                <div className="mt-2 text-sm font-medium">{description}</div>
+                                            </div>
+                                            <div className="shrink-0">{renderTransactionActions(t, isEditable, hasAttachments)}</div>
+                                        </div>
+                                        <div className="mt-4 flex items-center justify-between border-t pt-3">
+                                            <span className="text-sm text-slate-500">
+                                                {format(new Date(date as string), 'dd MMM yyyy', { locale: es })}
+                                            </span>
+                                            <span className={`text-lg font-bold ${isIncome ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                {isIncome ? '+' : '-'}${Number(amount).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
+                                            </span>
+                                        </div>
+                                        {t.notes && (
+                                            <p className="mt-2 line-clamp-2 text-xs text-slate-500">{t.notes}</p>
+                                        )}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="rounded-md border bg-white p-8 text-center text-slate-400">
+                                <FileText className="mx-auto mb-2 h-8 w-8 opacity-20" />
+                                <p>No se encontraron movimientos</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="hidden rounded-none border-0 md:block">
                         <Table>
                             <TableHeader className="bg-slate-50/50">
                                 <TableRow className="border-slate-100">
@@ -370,36 +491,7 @@ export default function TransactionsHistoryPage() {
                             <TableBody>
                                 {paginatedTransactions.length > 0 ? (
                                     paginatedTransactions.map((t) => {
-                                        let date, amount, badge, description, category;
-                                        const isEditable = t.type === 'payment' || t.type === 'expense_payment';
-
-                                        // Specific for expenses
-                                        const hasAttachments = t.type === 'expense_payment' && t.attachments && t.attachments.length > 0;
-
-                                        if (t.type === 'payment') {
-                                            date = t.paymentDate;
-                                            amount = t.amount;
-                                            badge = <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">Ingreso</Badge>;
-                                            description = <span className="text-slate-700">Factura {t.invoiceNumber} <span className="text-slate-500">{t.reference ? `(${t.reference})` : ''}</span></span>;
-                                            category = getPaymentMethodBadge(t.paymentMethod);
-                                        } else if (t.type === 'expense_payment') {
-                                            date = t.date;
-                                            amount = t.amount;
-                                            badge = <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">Gasto</Badge>;
-                                            description = (
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-slate-700">{t.expenseDescription} <span className="text-slate-500">{t.expenseSupplier ? ` - ${t.expenseSupplier}` : ''}</span></span>
-                                                    {hasAttachments && <Paperclip className="h-3 w-3 text-blue-500" />}
-                                                </div>
-                                            );
-                                            category = <Badge variant="secondary" className="bg-slate-100 text-slate-600 hover:bg-slate-200">{t.expenseCategory}</Badge>;
-                                        } else if (t.type === 'creditNote') {
-                                            date = t.date;
-                                            amount = t.total;
-                                            badge = <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Nota Crédito</Badge>;
-                                            description = <span className="text-slate-700">NCF: {t.ncf} <span className="text-slate-500">(Ref: {t.originalInvoiceNumber})</span></span>;
-                                            category = <span className="text-sm text-slate-500">{t.reason}</span>;
-                                        }
+                                        const { date, amount, badge, description, category, isEditable, hasAttachments } = getTransactionView(t);
 
                                         return (
                                             <TableRow key={`${t.type}-${t.id}`} className="hover:bg-slate-50/50 border-slate-100 text-sm">
@@ -422,38 +514,7 @@ export default function TransactionsHistoryPage() {
                                                     {t.notes || '-'}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    {isEditable && (
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
-                                                                    <span className="sr-only">Abrir menú</span>
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                {hasAttachments && t.type === 'expense_payment' && (
-                                                                    <DropdownMenuItem onClick={() => setPreviewUrl(t.attachments?.[0] || null)}>
-                                                                        <Eye className="mr-2 h-4 w-4" />
-                                                                        <span>Ver Comprobante</span>
-                                                                    </DropdownMenuItem>
-                                                                )}
-                                                                <DropdownMenuItem onClick={() => {
-                                                                    if (t.type === 'payment') handleEditPayment(t as Payment);
-                                                                    else if (t.type === 'expense_payment') handleEditExpensePayment(t);
-                                                                }}>
-                                                                    <Pencil className="mr-2 h-4 w-4" />
-                                                                    <span>Editar</span>
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    onClick={() => confirmDelete(t.id, t.type as 'payment' | 'expense_payment', t.amount)}
-                                                                    className="text-red-600 focus:text-red-600"
-                                                                >
-                                                                    <Trash className="mr-2 h-4 w-4" />
-                                                                    <span>Eliminar</span>
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    )}
+                                                    {renderTransactionActions(t, isEditable, hasAttachments)}
                                                 </TableCell>
                                             </TableRow>
                                         );

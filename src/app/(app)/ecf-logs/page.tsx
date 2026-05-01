@@ -125,7 +125,72 @@ export default function EcfLogsPage() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border border-slate-100 overflow-hidden">
+                    <div className="space-y-3 md:hidden">
+                        {isLoading ? (
+                            <div className="rounded-md border border-slate-100 bg-white p-8 text-center">
+                                <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-indigo-600"></div>
+                            </div>
+                        ) : logs.length > 0 ? (
+                            logs.map((log) => (
+                                <div key={`mobile-${log.id}`} className="rounded-md border border-slate-100 bg-white p-4 shadow-sm">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {log.status === 'SUCCESS'
+                                                    ? <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                                                    : <XCircle className="h-5 w-5 text-rose-500" />
+                                                }
+                                                {getActionBadge(log.action)}
+                                            </div>
+                                            <p className="mt-2 font-mono text-sm text-slate-700">{log.encf || '-'}</p>
+                                            {log.documentType && (
+                                                <p className="text-[10px] uppercase text-slate-400">{log.documentType}</p>
+                                            )}
+                                        </div>
+                                        <div className="flex shrink-0 items-center gap-1">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-indigo-600"
+                                                onClick={() => setAuditDocumentId(log.documentId)}
+                                                title="Ver Payloads Completos"
+                                            >
+                                                <FileSearch className="h-4 w-4" />
+                                            </Button>
+                                            {log.documentId && log.documentType !== 'Other' && (
+                                                <Link href={log.documentType === 'Invoice' ? `/invoices` : `/expenses`}>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500">
+                                                        <Navigation className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-slate-400">Fecha</p>
+                                            <p className="text-slate-600">{format(new Date(log.createdAt), 'dd MMM yy - HH:mm', { locale: es })}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-slate-400">Track ID</p>
+                                            <p className="truncate font-mono text-xs text-slate-500">{log.trackId || '-'}</p>
+                                        </div>
+                                    </div>
+                                    <p className={`mt-3 line-clamp-3 text-sm ${log.status === 'ERROR' ? 'font-medium text-rose-600' : 'text-slate-600'}`}>
+                                        {log.message || '-'}
+                                    </p>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="rounded-md border border-slate-100 bg-white p-8 text-center text-slate-400">
+                                <ShieldAlert className="mx-auto mb-3 h-12 w-12 opacity-20" />
+                                <p className="text-lg font-medium text-slate-600">No hay registros</p>
+                                <p className="text-sm">No se encontraron logs de auditoría con los filtros actuales.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="hidden rounded-md border border-slate-100 overflow-hidden md:block">
                         <Table>
                             <TableHeader className="bg-slate-50/50">
                                 <TableRow className="border-slate-100">

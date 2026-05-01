@@ -425,7 +425,44 @@ export default function QuotationsPage() {
                     </div>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                    <div className="rounded-md border overflow-hidden">
+                    <div className="space-y-3 md:hidden">
+                        {filteredQuotations.length > 0 ? (
+                            filteredQuotations.map((quotation) => (
+                                <div key={quotation.id} className="rounded-md border bg-background p-4 shadow-sm">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <p className="font-semibold">{quotation.number}</p>
+                                                {getStatusBadge(quotation.status)}
+                                            </div>
+                                            <p className="mt-1 truncate text-sm text-muted-foreground">{quotation.clientName}</p>
+                                        </div>
+                                        <div className="shrink-0">{renderQuotationActions(quotation)}</div>
+                                    </div>
+                                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-muted-foreground">Fecha</p>
+                                            <p>{format(new Date(quotation.date), 'dd MMM yyyy', { locale: es })}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-muted-foreground">Válida</p>
+                                            <p>{format(new Date(quotation.validUntil), 'dd MMM yyyy', { locale: es })}</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 flex items-center justify-between border-t pt-3">
+                                        <span className="text-sm text-muted-foreground">Total</span>
+                                        <span className="text-lg font-bold">${quotation.total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                <ClipboardList className="mx-auto mb-2 h-10 w-10 opacity-20" />
+                                <p>No se encontraron cotizaciones.</p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="hidden rounded-md border overflow-hidden md:block">
                         <Table>
                             <TableHeader className="bg-muted/50">
                                 <TableRow>

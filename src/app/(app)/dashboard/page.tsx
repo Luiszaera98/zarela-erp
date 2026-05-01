@@ -280,6 +280,24 @@ export default function DashboardPage() {
                         <CardDescription className="text-muted-foreground">Por facturación este mes</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
+                        <div className="space-y-2 p-4 md:hidden">
+                            {topClientsBilling.length > 0 ? (
+                                topClientsBilling.map((client: any, index: number) => (
+                                    <div key={index} className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/20 p-3">
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-medium text-muted-foreground">#{index + 1}</p>
+                                            <p className="truncate text-sm font-semibold text-foreground">{client.name}</p>
+                                        </div>
+                                        <p className="shrink-0 text-sm font-bold text-foreground">
+                                            ${client.value.toLocaleString('es-DO', { maximumFractionDigits: 0 })}
+                                        </p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-8 text-center text-sm text-muted-foreground">Sin datos disponibles</div>
+                            )}
+                        </div>
+                        <div className="hidden md:block">
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent border-border">
@@ -307,6 +325,7 @@ export default function DashboardPage() {
                                 )}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -317,6 +336,24 @@ export default function DashboardPage() {
                         <CardDescription className="text-muted-foreground">Por pagos recibidos este mes</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
+                        <div className="space-y-2 p-4 md:hidden">
+                            {topClientsPayment.length > 0 ? (
+                                topClientsPayment.map((client: any, index: number) => (
+                                    <div key={index} className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/20 p-3">
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-medium text-muted-foreground">#{index + 1}</p>
+                                            <p className="truncate text-sm font-semibold text-foreground">{client.name}</p>
+                                        </div>
+                                        <p className="shrink-0 text-sm font-bold text-foreground">
+                                            ${client.value.toLocaleString('es-DO', { maximumFractionDigits: 0 })}
+                                        </p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-8 text-center text-sm text-muted-foreground">Sin datos disponibles</div>
+                            )}
+                        </div>
+                        <div className="hidden md:block">
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent border-border">
@@ -344,6 +381,7 @@ export default function DashboardPage() {
                                 )}
                             </TableBody>
                         </Table>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

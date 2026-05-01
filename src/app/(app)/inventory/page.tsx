@@ -95,6 +95,35 @@ export default function InventoryPage() {
         setIsAddStockOpen(true);
     };
 
+    const renderProductActions = (product: Product) => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleAddStock(product)}>
+                    <PlusCircle className="h-4 w-4 mr-2 text-green-600" />
+                    Reabastecer
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleEdit(product)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => setDeleteProduct(product)}
+                    className="text-destructive focus:text-destructive"
+                >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Eliminar
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+
     return (
         <div className="space-y-4 md:space-y-8">
             <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center md:gap-4">
@@ -138,7 +167,62 @@ export default function InventoryPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-                            <div className="rounded-md border overflow-hidden">
+                            <div className="space-y-3 md:hidden">
+                                {isLoading ? (
+                                    <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                        Cargando productos...
+                                    </div>
+                                ) : products.length > 0 ? (
+                                    products.map((product) => {
+                                        const lowStock = product.stock <= product.minStock;
+                                        return (
+                                            <div key={product.id} className="rounded-md border bg-background p-4 shadow-sm">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <p className="truncate font-semibold">{product.name}</p>
+                                                        <p className="mt-1 font-mono text-xs text-muted-foreground">{product.sku}</p>
+                                                    </div>
+                                                    <div className="shrink-0">{renderProductActions(product)}</div>
+                                                </div>
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    <Badge variant="outline">{product.type}</Badge>
+                                                    {product.category && <Badge variant="secondary">{product.category}</Badge>}
+                                                    {lowStock ? (
+                                                        <Badge variant="destructive" className="gap-1">
+                                                            <AlertTriangle className="h-3 w-3" /> Bajo
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400">
+                                                            Normal
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                                                    <div>
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Stock</p>
+                                                        <p className="font-semibold">{product.stock} {product.unit}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Precio</p>
+                                                        <p className="font-semibold">{product.price > 0 ? `$${product.price.toFixed(2)}` : '-'}</p>
+                                                    </div>
+                                                    <div className="col-span-2">
+                                                        <p className="text-xs font-medium uppercase text-muted-foreground">Creación</p>
+                                                        <p>{product.createdAt ? format(new Date(product.createdAt), 'dd MMM yyyy', { locale: es }) : '-'}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="rounded-md border bg-background p-8 text-center text-muted-foreground">
+                                        <Package className="mx-auto mb-2 h-10 w-10 opacity-20" />
+                                        <p>No se encontraron productos.</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="hidden rounded-md border overflow-hidden md:block">
                                 <Table>
                                     <TableHeader className="bg-muted/50">
                                         <TableRow>
@@ -192,32 +276,7 @@ export default function InventoryPage() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="text-right">
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" size="sm">
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem onClick={() => handleAddStock(product)}>
-                                                                    <PlusCircle className="h-4 w-4 mr-2 text-green-600" />
-                                                                    Reabastecer
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem onClick={() => handleEdit(product)}>
-                                                                    <Edit className="h-4 w-4 mr-2" />
-                                                                    Editar
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    onClick={() => setDeleteProduct(product)}
-                                                                    className="text-destructive focus:text-destructive"
-                                                                >
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Eliminar
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
+                                                        {renderProductActions(product)}
                                                     </TableCell>
                                                 </TableRow>
                                             ))

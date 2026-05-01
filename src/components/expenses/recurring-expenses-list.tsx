@@ -92,7 +92,7 @@ export function RecurringExpensesList() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-xl font-semibold flex items-center gap-2">
                         <CalendarClock className="h-5 w-5" />
@@ -107,7 +107,60 @@ export function RecurringExpensesList() {
 
             <Card className="border-slate-100 shadow-sm bg-white">
                 <CardContent className="p-0">
-                    <div className="rounded-md border border-slate-100 overflow-hidden">
+                    <div className="space-y-3 p-4 md:hidden">
+                        {expenses.length > 0 ? (
+                            expenses.map((expense) => (
+                                <div key={expense.id} className="rounded-md border border-slate-100 bg-white p-4 shadow-sm">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <p className="truncate font-semibold text-slate-700">{expense.description}</p>
+                                            <p className="mt-1 text-xs text-slate-500">{expense.category}</p>
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            onClick={() => setDeleteId(expense.id)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        <Badge variant="outline" className="border-slate-200 text-slate-600">{expense.frequency}</Badge>
+                                        <Badge variant={expense.active ? 'secondary' : 'outline'}>
+                                            {expense.active ? 'Activo' : 'Inactivo'}
+                                        </Badge>
+                                    </div>
+                                    <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-3 text-sm">
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-slate-400">Monto</p>
+                                            <p className="font-semibold text-slate-700">${expense.amount.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-medium uppercase text-slate-400">Próxima</p>
+                                            <p className="text-slate-600">{format(new Date(expense.nextRun), 'dd MMM yyyy', { locale: es })}</p>
+                                        </div>
+                                        <div className="col-span-2 flex items-center justify-between">
+                                            <span className="text-xs font-medium uppercase text-slate-400">Automatización</span>
+                                            <Switch
+                                                checked={expense.active}
+                                                onCheckedChange={() => handleToggle(expense.id, expense.active)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <p className="mt-3 text-xs text-slate-500">
+                                        Última generación: {expense.lastGenerated ? format(new Date(expense.lastGenerated), 'dd MMM yyyy', { locale: es }) : '-'}
+                                    </p>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="rounded-md border border-slate-100 bg-white p-8 text-center text-slate-400">
+                                No hay gastos recurrentes configurados.
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="hidden rounded-md border border-slate-100 overflow-hidden md:block">
                         <Table>
                             <TableHeader className="bg-slate-50/50">
                                 <TableRow className="border-slate-100">
